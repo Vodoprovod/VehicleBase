@@ -1,0 +1,32 @@
+.mainTable {
+  border-collapse: collapse;
+  cursor: pointer;
+}
+
+.mainTable thead tr th {
+  border-bottom: 1px solid blueviolet;
+  border-left: 0px;
+  border-right: 0px;
+}
+
+.mainTable tbody {
+  //& tr:hover {
+  //  background: #eeeeee;
+  //}
+
+  & tr td {
+    border-bottom: 1px solid blueviolet;
+  }
+
+}
+
+td, th {
+  padding: 0px 10px 0px 10px;
+}
+
+.item {
+  &.selected {
+    background: #A4Ef19;
+  }
+}
+
