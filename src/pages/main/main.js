@@ -13,7 +13,7 @@ export default class MainPage extends React.Component {
         super(props);
 
         this.state = {
-          selected:""
+          selectedId:""
         };
     }
 
