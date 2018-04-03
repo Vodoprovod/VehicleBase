@@ -20,10 +20,9 @@ export default class MainPage extends React.Component {
     handleOnClick = (e) => {
         const elt = e.target.parentElement;
         const tableBody = elt.parentElement;
-        //console.log(tableBody);
-        //console.log(tableBody.childNodes);
-        //tableBody.childNodes.map(_ => _.removeClass(elt, 'selected'));
-        elt.classList.toggle('selected');
+        console.log("eltFchld: ", elt.firstChild.textContent );
+        tableBody.childNodes.forEach(_ => _.classList.remove('selected'));
+        elt.classList.add('selected');
 
     };
 

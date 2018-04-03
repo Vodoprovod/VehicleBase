@@ -52,6 +52,7 @@ export default class ListItem extends React.Component {
     handleOnClick = (e) => {
         //console.log(e.target.parentElement);
         //this.setState({ selected: true });
+        //this.state.selected ? this.setState({ selected: false }) : this.setState({ selected: true }) ;
     };
 
     renderItem = (item, idx) => {
