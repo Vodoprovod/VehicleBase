@@ -9,6 +9,8 @@ export default class MainPage extends React.Component {
 
     static path = '/';
 
+    static selectedItem = null;
+
     constructor(props) {
         super(props);
 
@@ -17,13 +19,20 @@ export default class MainPage extends React.Component {
         };
     }
 
+
+
     handleOnClick = (e) => {
         const elt = e.target.parentElement;
         const tableBody = elt.parentElement;
+
         console.log("eltFchld: ", elt.firstChild.textContent );
+
         tableBody.childNodes.forEach(_ => _.classList.remove('selected'));
         elt.classList.add('selected');
 
+        MainPage.selectedItem = elt.firstChild.textContent;
+
+        console.log("selectedItem: ", MainPage.selectedItem);
     };
 
     renderItems(item, idx) {
