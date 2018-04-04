@@ -4,12 +4,13 @@ import { Link } from 'react-router-dom';
 import data from '../../database/db_temp';
 import ListItem from './item';
 import './styles.less';
+import Header from '../../components/Header/index';
 
 export default class MainPage extends React.Component {
 
     static path = '/';
 
-    static selectedItem = null;
+    static selectedItem = 0;
 
     constructor(props) {
         super(props);
@@ -24,8 +25,6 @@ export default class MainPage extends React.Component {
     handleOnClick = (e) => {
         const elt = e.target.parentElement;
         const tableBody = elt.parentElement;
-
-        console.log("eltFchld: ", elt.firstChild.textContent );
 
         tableBody.childNodes.forEach(_ => _.classList.remove('selected'));
         elt.classList.add('selected');
@@ -52,6 +51,9 @@ export default class MainPage extends React.Component {
     }
 
     render() {
+
+        MainPage.selectedItem = 0;
+
         return (
             <div className='mainPage'>
                 <h1>Список ТС</h1>
