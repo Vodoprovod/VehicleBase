@@ -10,6 +10,14 @@ export default class Header extends React.Component {
 
     static selectedItem = 0;
 
+    componentWillMount() {
+        this.forceUpdate();
+    };
+
+    recallUpdate =()=> {
+        this.forceUpdate();
+    };
+
     render() {
 
         Header.selectedItem = MainPage.selectedItem;
@@ -22,7 +30,7 @@ export default class Header extends React.Component {
         return (
 
             <nav >
-                <ul >
+                <ul onClick={ this.recallUpdate }>
                     <li><Link to='/'>Список ТС</Link></li>
                     <li><Link to={ str } >Подробности</Link></li>
                     <li><Link to='/help'>Справка</Link></li>
@@ -32,6 +40,10 @@ export default class Header extends React.Component {
     }
 
 }
+
+
+
+//<li><Link to={ str } >Подробности</Link></li>
 
 //<li><Link to={ this.selectedItem ? `/details/${ this.selectedItem }` : '/details'}>Подробности</Link></li>
 

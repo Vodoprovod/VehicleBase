@@ -31,8 +31,10 @@ export default class MainPage extends React.Component {
 
         MainPage.selectedItem = elt.firstChild.textContent;
 
+        //Header.recallUpdate();
+
         console.log("selectedItem: ", MainPage.selectedItem);
-    };
+    }
 
     renderItems(item, idx) {
         return (
@@ -50,9 +52,32 @@ export default class MainPage extends React.Component {
         );
     }
 
+
+    //////////////////////////////НЕ ВЫДЕЛЯЕТ СТРОКУ!!!!!!!!!!!!
+    componentDidMount() {
+        // document.getElementsByClassName('item').forEach(_ => {
+        //     if (_.firstChild.textContent === MainPage.selectedItem) _.classList.add('selected');
+        // })
+
+        console.log("items: ", document.getElementsByClassName('item'));
+
+        let items = document.getElementsByClassName('item');
+
+        //items.forEach(item => { if (item.firstChild.textContent === MainPage.selectedItem) item.classList.add('selected') });
+
+        for (let i = 0; i < items.length; i++) {
+            if (items[i].firstChild.textContent === MainPage.selectedItem) {
+                items[i].classList.add('selected');
+                console.log("selected item", items[i]);
+                return;
+            }
+        }
+    }
+
     render() {
 
         MainPage.selectedItem = 0;
+
 
         return (
             <div className='mainPage'>
