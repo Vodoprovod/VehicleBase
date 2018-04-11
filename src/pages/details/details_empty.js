@@ -1,4 +1,5 @@
 import React from 'react';
+import Header from '../../components/Header/index';
 
 export default class DetailsEmptyPage extends React.Component {
 
@@ -6,18 +7,21 @@ export default class DetailsEmptyPage extends React.Component {
 
     render() {
         return (
-            <div className="topBlockDetails">
-                <div className="headerDetails"><h2>Рег. номер ТС</h2></div>
-                <table className="tableDetails">
-                    <tbody>
-                    <tr><td className="detailName">Въезд в ЗТК</td><td className="detail">---</td></tr>
-                    <tr><td className="detailName">Сообщение</td><td className="detail">---</td></tr>
-                    <tr><td className="detailName">ИДК</td><td className="detail">---</td></tr>
-                    <tr><td className="detailName">Досмотр</td><td className="detail">---</td></tr>
-                    <tr><td className="detailName">Оформление</td><td className="detail">---</td></tr>
-                    <tr><td className="detailName">Выезд из ЗТК</td><td className="detail">---</td></tr>
-                    </tbody>
-                </table>
+            <div>
+                <Header sel='1'/>
+                <div className="topBlockDetails">
+                    <div className="headerDetails"><h2>Рег. номер ТС</h2></div>
+                    <table className="tableDetails">
+                        <tbody>
+                        <tr><td className="detailName">Въезд в ЗТК</td><td className="detail">---</td></tr>
+                        <tr><td className="detailName">Сообщение</td><td className="detail">---</td></tr>
+                        <tr><td className="detailName">ИДК</td><td className="detail">---</td></tr>
+                        <tr><td className="detailName">Досмотр</td><td className="detail">---</td></tr>
+                        <tr><td className="detailName">Оформление</td><td className="detail">---</td></tr>
+                        <tr><td className="detailName">Выезд из ЗТК</td><td className="detail">---</td></tr>
+                        </tbody>
+                    </table>
+                </div>
             </div>
 
         );

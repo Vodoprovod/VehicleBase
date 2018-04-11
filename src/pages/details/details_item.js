@@ -2,6 +2,8 @@ import React from 'react';
 import data from '../../database/db_temp';
 import moment from 'moment';
 
+import Header from '../../components/Header/index';
+
 export default class DetailsItemPage extends React.Component {
 
     constructor(props) {
@@ -58,18 +60,21 @@ export default class DetailsItemPage extends React.Component {
     render() {
 
         return (
-            <div className="topBlockDetails">
-                <div className="headerDetails"><h2>{ this.state.regNum }</h2></div>
-                <table className="tableDetails">
-                    <tbody>
-                    <tr><td className="detailName">Въезд в ЗТК</td><td className="detail">{ this.state.cczIn }</td></tr>
-                    <tr><td className="detailName">Сообщение</td><td className="detail">{ this.state.notification }</td></tr>
-                    <tr><td className="detailName">ИДК</td><td className="detail">{ this.state.cis }</td></tr>
-                    <tr><td className="detailName">Досмотр</td><td className="detail">{ this.state.inspection }</td></tr>
-                    <tr><td className="detailName">Оформление</td><td className="detail">{ this.state.custClearance }</td></tr>
-                    <tr><td className="detailName">Выезд из ЗТК</td><td className="detail">{ this.state.cczOut }</td></tr>
-                    </tbody>
-                </table>
+            <div>
+                <Header sel={ this.state.id } />
+                <div className="topBlockDetails">
+                    <div className="headerDetails"><h2>{ this.state.regNum }</h2></div>
+                    <table className="tableDetails">
+                        <tbody>
+                        <tr><td className="detailName">Въезд в ЗТК</td><td className="detail">{ this.state.cczIn }</td></tr>
+                        <tr><td className="detailName">Сообщение</td><td className="detail">{ this.state.notification }</td></tr>
+                        <tr><td className="detailName">ИДК</td><td className="detail">{ this.state.cis }</td></tr>
+                        <tr><td className="detailName">Досмотр</td><td className="detail">{ this.state.inspection }</td></tr>
+                        <tr><td className="detailName">Оформление</td><td className="detail">{ this.state.custClearance }</td></tr>
+                        <tr><td className="detailName">Выезд из ЗТК</td><td className="detail">{ this.state.cczOut }</td></tr>
+                        </tbody>
+                    </table>
+                </div>
             </div>
 
         );

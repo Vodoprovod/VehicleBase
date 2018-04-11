@@ -4,7 +4,6 @@ import { Route, Switch } from 'react-router-dom';
 import DetailsEmptyPage from './details_empty';
 import DetailsItemPage from './details_item';
 
-
 export default class DetailsPage extends React.Component {
 
     render() {

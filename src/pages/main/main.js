@@ -10,13 +10,11 @@ export default class MainPage extends React.Component {
 
     static path = '/';
 
-    static selectedItem = 0;
-
     constructor(props) {
         super(props);
 
         this.state = {
-          selectedId:""
+          selectedId: Header.selectedItem ? String(Header.selectedItem) : '1'
         };
     }
 
@@ -29,12 +27,8 @@ export default class MainPage extends React.Component {
         tableBody.childNodes.forEach(_ => _.classList.remove('selected'));
         elt.classList.add('selected');
 
-        MainPage.selectedItem = elt.firstChild.textContent;
-
-        //Header.recallUpdate();
-
-        console.log("selectedItem: ", MainPage.selectedItem);
-    }
+        this.setState({ selectedId: String(elt.firstChild.textContent) });
+    };
 
     renderItems(item, idx) {
         return (
@@ -54,35 +48,41 @@ export default class MainPage extends React.Component {
 
 
     //////////////////////////////НЕ ВЫДЕЛЯЕТ СТРОКУ!!!!!!!!!!!!
-    componentDidMount() {
-        // document.getElementsByClassName('item').forEach(_ => {
-        //     if (_.firstChild.textContent === MainPage.selectedItem) _.classList.add('selected');
-        // })
+    componentWillMount() {
 
-        console.log("items: ", document.getElementsByClassName('item'));
+        this.setState({ selectedId: Header.selectedItem ? String(Header.selectedItem) : '1' });
+
+        console.log("item: ", this.state.selectedId);
 
         let items = document.getElementsByClassName('item');
 
-        //items.forEach(item => { if (item.firstChild.textContent === MainPage.selectedItem) item.classList.add('selected') });
+        console.log("ITEMS: ", items );
+
+        const arr = [...items];
+        //[].push.apply(arr, items);
+
+        console.log("ITEMS_LENGTH: ", arr.length );
 
         for (let i = 0; i < items.length; i++) {
-            if (items[i].firstChild.textContent === MainPage.selectedItem) {
-                items[i].classList.add('selected');
-                console.log("selected item", items[i]);
-                return;
-            }
+
+            console.log("id: ", this.state.selectedId);
+            //console.log("id: ", items[i].firstChild.textContent);
+
+            // if (items[i].firstChild.textContent === this.state.selectedId) {
+            //     items[i].classList.add('selected');
+            //     console.log("selected item", items[i]);
+            //     return;
+            // }
         }
+
+
     }
 
     render() {
 
-        MainPage.selectedItem = 0;
-
-
         return (
             <div className='mainPage'>
-                <h1>Список ТС</h1>
-
+                <Header sel={ this.state.selectedId } />
                 <table className='mainTable'>
                     <thead>
                         <tr>
