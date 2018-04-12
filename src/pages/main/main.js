@@ -10,6 +10,7 @@ export default class MainPage extends React.Component {
 
     static path = '/';
 
+
     constructor(props) {
         super(props);
 
@@ -30,6 +31,14 @@ export default class MainPage extends React.Component {
         this.setState({ selectedId: String(elt.firstChild.textContent) });
     };
 
+    //разобраться с управлением клавишами-стрелками
+    handleOnKeyDown = (e) => {
+
+        const keyCode = e.keyCode;
+        console.log("Key Code: ", keyCode);
+
+    };
+
     renderItems(item, idx) {
         return (
             <ListItem
@@ -47,43 +56,33 @@ export default class MainPage extends React.Component {
     }
 
 
-    //////////////////////////////НЕ ВЫДЕЛЯЕТ СТРОКУ!!!!!!!!!!!!
     componentWillMount() {
 
         this.setState({ selectedId: Header.selectedItem ? String(Header.selectedItem) : '1' });
 
-        console.log("item: ", this.state.selectedId);
+    }
 
-        let items = document.getElementsByClassName('item');
-
-        console.log("ITEMS: ", items );
-
-        const arr = [...items];
-        //[].push.apply(arr, items);
-
-        console.log("ITEMS_LENGTH: ", arr.length );
+    componentDidMount() {
+        const items = document.getElementsByClassName('item');
 
         for (let i = 0; i < items.length; i++) {
-
-            console.log("id: ", this.state.selectedId);
-            //console.log("id: ", items[i].firstChild.textContent);
-
-            // if (items[i].firstChild.textContent === this.state.selectedId) {
-            //     items[i].classList.add('selected');
-            //     console.log("selected item", items[i]);
-            //     return;
-            // }
+            if (items[i].firstChild.textContent === this.state.selectedId) {
+                items[i].classList.add('selected');
+                return;
+            }
         }
-
 
     }
 
     render() {
 
+        //document.body.onkeydown = this.handleOnKeyDown;
+
+
         return (
             <div className='mainPage'>
                 <Header sel={ this.state.selectedId } />
-                <table className='mainTable'>
+                <table className='mainTable'  >
                     <thead>
                         <tr>
                             <th>ID</th>
@@ -96,7 +95,10 @@ export default class MainPage extends React.Component {
                             <th>Выезд из ЗТК</th>
                         </tr>
                     </thead>
-                    <tbody onClick={ this.handleOnClick }>
+                    <tbody
+                        onClick={ this.handleOnClick }
+                        className='tableBody'
+                    >
                         { data.map(this.renderItems) }
                     </tbody>
                 </table>
