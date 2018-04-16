@@ -10,17 +10,14 @@ export default class MainPage extends React.Component {
 
     static path = '/';
 
-
     constructor(props) {
         super(props);
 
         this.state = {
             selectedId: Header.selectedItem ? String(Header.selectedItem) : '1',
-            nextId: 4
+            data: data
         };
     }
-
-
 
     handleOnClick = (e) => {
         const elt = e.target.parentElement;
@@ -32,13 +29,12 @@ export default class MainPage extends React.Component {
         this.setState({ selectedId: String(elt.firstChild.textContent) });
     };
 
-
     // ЗАПИСЬ НЕ ДОБАВЛЯЕТСЯ В db_temp, this.state.nextId - не записывается
     onClickBtnAddRecord() {
 
         let newRecord = {
-            id: this.state.nextId,
-            regNum: '00000000',
+            id: Math.random().toFixed(3) * 1000 ,
+            regNum: 'AAA' + Math.random().toFixed(3) * 1000,
             cczIn: new Date(),
             notification: new Date(),
             cis: new Date(),
@@ -47,21 +43,12 @@ export default class MainPage extends React.Component {
             cczOut: new Date(),
         };
 
-        data.push(newRecord);
-
-        let newNextId = this.state.nextId++;
+        this.state.data.push(newRecord);
 
         this.setState({ selectedId: String(newRecord.id) });
-        this.setState({ nextId: newNextId });
 
-        const tableBody = document.getElementsByClassName('tableBody')[0];
-        tableBody.childNodes.forEach(_ => _.classList.remove('selected'));
-        tableBody.childNodes.item(tableBody.childNodes.length - 1).classList.add('selected');
-
-        console.log("newRecord.id: ", String(newRecord.id));
-        console.log("selectedId: ", this.state.selectedId );
-        console.log("newNextId: ", this.state.nextId );
-        console.log("Add Record: ", tableBody.childNodes.length);
+        // console.log("newRecord.id: ", String(newRecord.id));
+        // console.log("selectedId: ", this.state.selectedId );
     }
 
     // ЗАПИСЬ НЕ УДАЛЯЕТСЯ ИЗ db_temp!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -69,19 +56,21 @@ export default class MainPage extends React.Component {
         console.log("Delete record");
 
         //data.find(_ => _.id === +this.props.match.params.number);
-        let index = data.findIndex(_ => _.id === +this.state.selectedId);
-        let deletedRec = data.splice(index, 1);
+        let index = this.state.data.findIndex(_ => _.id === +this.state.selectedId);
+        let deletedRec = this.state.data.splice(index, 1);
+
+        this.setState({ selectedId: '1' });
 
         console.log("record: ", deletedRec);
     }
 
     //разобраться с управлением клавишами-стрелками
-    handleOnKeyDown = (e) => {
-
-        const keyCode = e.keyCode;
-        console.log("Key Code: ", keyCode);
-
-    };
+    // handleOnKeyDown = (e) => {
+    //
+    //     const keyCode = e.keyCode;
+    //     console.log("Key Code: ", keyCode);
+    //
+    // };
 
     renderItems(item, idx) {
         return (
@@ -99,29 +88,43 @@ export default class MainPage extends React.Component {
         );
     }
 
+    // функция используется для позиционирования рамки-выделения в таблице
+    selectRecord() {
+
+        let items = document.getElementsByClassName('item');
+
+        let arr = [];
+        arr.push.apply(arr, items);
+        arr.forEach(_ => _.classList.remove('selected'));
+        arr.forEach(_ => {
+            if (_.firstChild.textContent === this.state.selectedId) _.classList.add('selected');
+            return;
+        });
+    }
+
+
     // componentWillMount и componentDidMount здесь позволяют восстановить положение рамки-выделения в таблице
     // после возвращения из Подробностей
     componentWillMount() {
-
         this.setState({ selectedId: Header.selectedItem ? String(Header.selectedItem) : '1' });
-
     }
 
     componentDidMount() {
-        const items = document.getElementsByClassName('item');
+        this.setState({ data });
+        this.selectRecord();
+    }
 
-        for (let i = 0; i < items.length; i++) {
-            if (items[i].firstChild.textContent === this.state.selectedId) {
-                items[i].classList.add('selected');
-                return;
-            }
-        }
-
+    // componentDidUpdate здесь используется для позиционирования рамки-выделения в таблице
+    // после добавления записи
+    componentDidUpdate() {
+        this.selectRecord();
     }
 
     render() {
 
         //document.body.onkeydown = this.handleOnKeyDown;
+
+        //console.log("RENDERED");
 
         return (
             <div className='mainPage'>
@@ -147,7 +150,7 @@ export default class MainPage extends React.Component {
                         onClick={ this.handleOnClick }
                         className='tableBody'
                     >
-                        { data.map(this.renderItems) }
+                    { this.state.data.map(this.renderItems) }
                     </tbody>
                 </table>
             </div>
@@ -155,3 +158,6 @@ export default class MainPage extends React.Component {
     }
 
 }
+
+
+//{ data.map(this.renderItems) }
