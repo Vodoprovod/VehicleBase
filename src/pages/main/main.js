@@ -53,15 +53,12 @@ export default class MainPage extends React.Component {
 
     // ЗАПИСЬ НЕ УДАЛЯЕТСЯ ИЗ db_temp!!!!!!!!!!!!!!!!!!!!!!!!!!
     onClickBtnDeleteRecord() {
-        console.log("Delete record");
 
-        //data.find(_ => _.id === +this.props.match.params.number);
         let index = this.state.data.findIndex(_ => _.id === +this.state.selectedId);
-        let deletedRec = this.state.data.splice(index, 1);
+        this.state.data.splice(index, 1);
 
         this.setState({ selectedId: '1' });
 
-        console.log("record: ", deletedRec);
     }
 
     //разобраться с управлением клавишами-стрелками
