@@ -49,21 +49,19 @@ button {
 }
 
 .modal {
-  border: solid black 1px;
+  border: none;
   border-radius: 3px;
-  //box-shadow: 0, 0, 10px, rgba(256, 0, 0, 0.5);
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
   width: 500px;
-  length: 300px;
+  height: 300px;
   background: #ffffff;
-  top: 50%;
-  left: auto;
-  right: auto;
+  margin: 100px 100px;
   display: none;
   position: absolute;
 
   &.visible {
     display: block!important;
-    vertical-align: middle;
+    //vertical-align: middle;
     z-index: 100;
   }
 }
