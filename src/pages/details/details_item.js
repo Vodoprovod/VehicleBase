@@ -26,31 +26,8 @@ export default class DetailsItemPage extends React.Component {
 
     getCurrentItemFromDB() {
 
-        /////////////////////////////  Этого достаточно
         return data.find(_ => _.id === +this.props.match.params.number);
-        ///////////////////////////
 
-
-        let idx = 0;
-
-        for (let i = 0; i < data.length; i++) {
-            if (data[i].id === Number(this.props.match.params.number)) {
-                idx = i;
-                break;
-            }
-        }
-
-
-        return {
-            id: data[idx].id,
-            regNum: data[idx].regNum,
-            cczIn: data[idx].cczIn,
-            notification: data[idx].notification,
-            cis: data[idx].cis,
-            inspection: data[idx].inspection,
-            custClearance: data[idx].custClearance,
-            cczOut: data[idx].cczOut
-        }
     }
 
     formatDate(customDate) {

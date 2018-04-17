@@ -55,10 +55,24 @@ export default class MainPage extends React.Component {
     onClickBtnDeleteRecord() {
 
         let index = this.state.data.findIndex(_ => _.id === +this.state.selectedId);
-        this.state.data.splice(index, 1);
 
-        this.setState({ selectedId: '1' });
+        if (confirm("Удалить запись о ТС № " + this.state.data[index].regNum + "?")) {
+            this.state.data.splice(index, 1);
+            this.setState({selectedId: '1'});
+        } else {
+            return;
+        }
 
+    }
+
+    onClickBtnShowModal() {
+        let elt = document.getElementsByClassName('modal');
+        elt[0].classList.add('visible');
+        let panels = document.getElementsByClassName('panel');
+        panels[0].classList.add('visible');
+
+        console.log(elt);
+        console.log(panels);
     }
 
     //разобраться с управлением клавишами-стрелками
@@ -125,10 +139,12 @@ export default class MainPage extends React.Component {
 
         return (
             <div className='mainPage'>
+                <div className='panel' ></div>
                 <Header sel={ this.state.selectedId } />
                 <div>
                     <button onClick={ this.onClickBtnAddRecord.bind(this) }>Добавить запись</button>
                     <button onClick={ this.onClickBtnDeleteRecord.bind(this) }>Удалить запись</button>
+                    <button onClick={ this.onClickBtnShowModal.bind(this) }>Показать окно</button>
                 </div>
                 <table className='mainTable'  >
                     <thead>
