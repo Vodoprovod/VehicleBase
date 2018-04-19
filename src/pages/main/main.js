@@ -13,17 +13,17 @@ export default class MainPage extends React.Component {
 
     static path = '/';
 
+    state = {
+        selectedId: Header.selectedItem ? String(Header.selectedItem) : '1',
+        data: data,
+        modalTitle: null,
+        modalContent: null,
+        modalFooter: null,
+        modalData: { emptyData: 'emptyData' }
+    };
+
     constructor(props) {
         super(props);
-
-        this.state = {
-            selectedId: Header.selectedItem ? String(Header.selectedItem) : '1',
-            data: data,
-            modalTitle: null,
-            modalContent: null,
-            modalFooter: null,
-            modalData: { emptyData: 'emptyData' }
-        };
     }
 
     handleOnClick = (e) => {
@@ -63,24 +63,27 @@ export default class MainPage extends React.Component {
 
         let index = this.state.data.findIndex(_ => _.id === +this.state.selectedId);
 
-
         this.setState({
             modalTitle: 'Удаление записи',
-            modalContent: `Удалить запись о ТС № ${this.state.data[index].regNum} ?`,
+            modalContent: `Удалить запись о ТС № ${ this.state.data[index].regNum } ?`,
+            modalFooter: 'Удалить'
         });
 
         this.onClickBtnShowModal();
 
-        // if (confirm("Удалить запись о ТС № " + this.state.data[index].regNum + "?")) {
-        //     this.state.data.splice(index, 1);
-        //     this.setState({selectedId: '1'});
-        // } else {
-        //     return;
-        // }
+        console.log('Клик удалить запись после отображения окна:', this.state.modalData);
+
+        //if (confirm("Удалить запись о ТС № " + this.state.data[index].regNum + "?")) {
+        if (this.state.modalData === true) {
+            this.state.data.splice(index, 1);
+            this.setState({ selectedId: '1' });
+        } else {
+            return;
+        }
     }
 
     getModalData = (fetchedModalData) => {
-        console.log('Data from modal window: ', fetchedModalData);
+        console.log('Данные, которые вернуло окно: ', fetchedModalData);
         this.setState({ modalData: fetchedModalData });
     };
 
@@ -89,9 +92,6 @@ export default class MainPage extends React.Component {
         elt[0].classList.add('visible');
         let panels = document.getElementsByClassName('panel');
         panels[0].classList.add('visible');
-
-        console.log(elt);
-        console.log(panels);
     }
 
     //разобраться с управлением клавишами-стрелками
@@ -193,5 +193,9 @@ export default class MainPage extends React.Component {
 
 }
 
-
-//{ data.map(this.renderItems) }
+// {/*<Modal*/}
+//     {/*modalTitle={ this.state.modalTitle }*/}
+//     {/*modalContent={ this.state.modalContent }*/}
+//     {/*modalFooter={ this.state.modalFooter }*/}
+//     {/*onConfirm={ this.getModalData }*/}
+// {/*/>*/}

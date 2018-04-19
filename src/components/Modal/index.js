@@ -3,22 +3,27 @@ import './styles.less';
 
 export default class Modal extends React.Component {
 
+    state = {
+        isOpen: false,
+        isClicked: false
+    };
+
     constructor(props) {
         super(props);
 
-        this.state = {
-            isOpen: false
-        };
+
     }
 
     handleClickButton(e) {
 
-        console.log('Click Modal Button: ', e.target.textContent);
+        console.log('Клик на кнопке модального окна: ', e.target.textContent);
 
         if (e.target.textContent === 'Отмена')
             this.props.onConfirm(false);
         else
             this.props.onConfirm(true);
+
+        this.setState({ isClicked: !this.state.isClicked });
 
         this.closeWindow();
     }
@@ -29,7 +34,11 @@ export default class Modal extends React.Component {
 
         let panels = document.getElementsByClassName('panel');
         panels[0].classList.remove('visible');
-        console.log(elt);
+        //console.log(elt);
+    }
+
+    componentDidUpdate() {
+        console.log('Модальное окно обновлено');
     }
 
     render() {
@@ -50,8 +59,7 @@ export default class Modal extends React.Component {
                     <h2>{ modalContent }</h2>
                 </div>
                 <div className='modalFooter'>
-                    { modalFooter }
-                    <button onClick={ this.handleClickButton.bind(this) }>Да</button>
+                    <button onClick={ this.handleClickButton.bind(this) }>{ modalFooter }</button>
                     <button onClick={ this.handleClickButton.bind(this) }>Отмена</button>
                 </div>
             </div>
