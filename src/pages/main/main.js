@@ -6,6 +6,9 @@ import ListItem from './item';
 import './styles.less';
 import Header from '../../components/Header/index';
 
+import Modal from '../../components/Modal/index';
+
+
 export default class MainPage extends React.Component {
 
     static path = '/';
@@ -15,7 +18,11 @@ export default class MainPage extends React.Component {
 
         this.state = {
             selectedId: Header.selectedItem ? String(Header.selectedItem) : '1',
-            data: data
+            data: data,
+            modalTitle: null,
+            modalContent: null,
+            modalFooter: null,
+            modalData: { emptyData: 'emptyData' }
         };
     }
 
@@ -56,14 +63,26 @@ export default class MainPage extends React.Component {
 
         let index = this.state.data.findIndex(_ => _.id === +this.state.selectedId);
 
-        if (confirm("Удалить запись о ТС № " + this.state.data[index].regNum + "?")) {
-            this.state.data.splice(index, 1);
-            this.setState({selectedId: '1'});
-        } else {
-            return;
-        }
 
+        this.setState({
+            modalTitle: 'Удаление записи',
+            modalContent: `Удалить запись о ТС № ${this.state.data[index].regNum} ?`,
+        });
+
+        this.onClickBtnShowModal();
+
+        // if (confirm("Удалить запись о ТС № " + this.state.data[index].regNum + "?")) {
+        //     this.state.data.splice(index, 1);
+        //     this.setState({selectedId: '1'});
+        // } else {
+        //     return;
+        // }
     }
+
+    getModalData = (fetchedModalData) => {
+        console.log('Data from modal window: ', fetchedModalData);
+        this.setState({ modalData: fetchedModalData });
+    };
 
     onClickBtnShowModal() {
         let elt = document.getElementsByClassName('modal');
@@ -113,7 +132,6 @@ export default class MainPage extends React.Component {
         });
     }
 
-
     // componentWillMount и componentDidMount здесь позволяют восстановить положение рамки-выделения в таблице
     // после возвращения из Подробностей
     componentWillMount() {
@@ -134,12 +152,15 @@ export default class MainPage extends React.Component {
     render() {
 
         //document.body.onkeydown = this.handleOnKeyDown;
-
-        //console.log("RENDERED");
-
         return (
             <div className='mainPage'>
-                <div className='panel' ></div>
+                <div className='panel'></div>
+                <Modal
+                    modalTitle={ this.state.modalTitle }
+                    modalContent={ this.state.modalContent }
+                    modalFooter={ this.state.modalFooter }
+                    onConfirm={ this.getModalData }
+                />
                 <Header sel={ this.state.selectedId } />
                 <div>
                     <button onClick={ this.onClickBtnAddRecord.bind(this) }>Добавить запись</button>
