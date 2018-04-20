@@ -19,7 +19,7 @@ export default class MainPage extends React.Component {
         modalTitle: null,
         modalContent: null,
         modalFooter: null,
-        modalData: { emptyData: 'emptyData' }
+        modalAction: null
     };
 
     constructor(props) {
@@ -39,23 +39,32 @@ export default class MainPage extends React.Component {
     // ЗАПИСЬ НЕ ДОБАВЛЯЕТСЯ В db_temp, this.state.nextId - не записывается
     onClickBtnAddRecord() {
 
-        let newRecord = {
-            id: Math.random().toFixed(3) * 1000 ,
-            regNum: 'AAA' + Math.random().toFixed(3) * 1000,
-            cczIn: new Date(),
-            notification: new Date(),
-            cis: new Date(),
-            inspection: new Date(),
-            custClearance: new Date(),
-            cczOut: new Date(),
-        };
+        //===========================ЗАГЛУШКА============================
+        // let newRecord = {
+        //     id: Math.random().toFixed(3) * 1000 ,
+        //     regNum: 'AAA' + Math.random().toFixed(3) * 1000,
+        //     cczIn: new Date(),
+        //     notification: new Date(),
+        //     cis: new Date(),
+        //     inspection: new Date(),
+        //     custClearance: new Date(),
+        //     cczOut: new Date(),
+        // };
+        //
+        // this.state.data.push(newRecord);
+        //
+        // this.setState({ selectedId: String(newRecord.id) });
+        //============================КОНЕЦ ЗАГЛУШКИ===========================
 
-        this.state.data.push(newRecord);
+        this.setState({
+            modalTitle: 'Добавление записи',
+            modalContent: 'Заполните поля',
+            modalFooter: 'Сохранить',
+            modalAction: 'NewRecord'
+        });
 
-        this.setState({ selectedId: String(newRecord.id) });
+        this.showModal();
 
-        // console.log("newRecord.id: ", String(newRecord.id));
-        // console.log("selectedId: ", this.state.selectedId );
     }
 
     // ЗАПИСЬ НЕ УДАЛЯЕТСЯ ИЗ db_temp!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -66,28 +75,45 @@ export default class MainPage extends React.Component {
         this.setState({
             modalTitle: 'Удаление записи',
             modalContent: `Удалить запись о ТС № ${ this.state.data[index].regNum } ?`,
-            modalFooter: 'Удалить'
+            modalFooter: 'Удалить',
+            modalAction: 'Deleting'
         });
 
-        this.onClickBtnShowModal();
+        this.showModal();
+    }
 
-        console.log('Клик удалить запись после отображения окна:', this.state.modalData);
+    actionDeleteRecord() {
+        let index = this.state.data.findIndex(_ => _.id === +this.state.selectedId);
+        this.state.data.splice(index, 1);
+        this.setState({ selectedId: '1' });
+    }
 
-        //if (confirm("Удалить запись о ТС № " + this.state.data[index].regNum + "?")) {
-        if (this.state.modalData === true) {
-            this.state.data.splice(index, 1);
-            this.setState({ selectedId: '1' });
-        } else {
-            return;
-        }
+    actionNewRecord( fetchedData ) {
+        console.log('actionNewRecord получены данные: ', fetchedData);
     }
 
     getModalData = (fetchedModalData) => {
-        console.log('Данные, которые вернуло окно: ', fetchedModalData);
-        this.setState({ modalData: fetchedModalData });
+        //console.log('Данные, которые вернуло окно: ', fetchedModalData);
+
+        if (this.state.modalAction === 'Deleting' && fetchedModalData === true) {
+            console.log('Удаление подтверждено');
+            this.actionDeleteRecord();
+        } else if (this.state.modalAction === 'NewRecord') {
+            console.log('Добавление подтверждено');
+            this.actionNewRecord(fetchedModalData);
+        } else {
+            console.log('Действие отменено');
+        }
+
+        this.setState({
+            modalTitle: null,
+            modalContent: null,
+            modalFooter: null,
+            modalAction: null
+        });
     };
 
-    onClickBtnShowModal() {
+    showModal() {
         let elt = document.getElementsByClassName('modal');
         elt[0].classList.add('visible');
         let panels = document.getElementsByClassName('panel');
@@ -128,7 +154,6 @@ export default class MainPage extends React.Component {
         arr.forEach(_ => _.classList.remove('selected'));
         arr.forEach(_ => {
             if (_.firstChild.textContent === this.state.selectedId) _.classList.add('selected');
-            return;
         });
     }
 
@@ -141,12 +166,14 @@ export default class MainPage extends React.Component {
     componentDidMount() {
         this.setState({ data });
         this.selectRecord();
+        //console.log('componentDidMount');
     }
 
     // componentDidUpdate здесь используется для позиционирования рамки-выделения в таблице
     // после добавления записи
     componentDidUpdate() {
         this.selectRecord();
+        //console.log('componentDidUpdate');
     }
 
     render() {
@@ -160,12 +187,13 @@ export default class MainPage extends React.Component {
                     modalContent={ this.state.modalContent }
                     modalFooter={ this.state.modalFooter }
                     onConfirm={ this.getModalData }
+                    modalAction={ this.state.modalAction }
                 />
                 <Header sel={ this.state.selectedId } />
                 <div>
                     <button onClick={ this.onClickBtnAddRecord.bind(this) }>Добавить запись</button>
                     <button onClick={ this.onClickBtnDeleteRecord.bind(this) }>Удалить запись</button>
-                    <button onClick={ this.onClickBtnShowModal.bind(this) }>Показать окно</button>
+                    <button onClick={ this.showModal.bind(this) }>Показать окно</button>
                 </div>
                 <table className='mainTable'  >
                     <thead>

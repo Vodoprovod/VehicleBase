@@ -8,10 +8,10 @@ export default class Modal extends React.Component {
         isClicked: false
     };
 
+    modalForm = <div><div><label>Рег. номер ТС: <input id='inputRegNum' placeholder='Введите рег. номер ТС' /></label></div><div><label>Время взвешивания: <input id='inputСczIn'  /></label></div></div>;
+
     constructor(props) {
         super(props);
-
-
     }
 
     handleClickButton(e) {
@@ -21,7 +21,13 @@ export default class Modal extends React.Component {
         if (e.target.textContent === 'Отмена')
             this.props.onConfirm(false);
         else
-            this.props.onConfirm(true);
+            if (this.props.modalAction === 'Deleting')
+                this.props.onConfirm(true);
+            else if (this.props.modalAction === 'NewRecord') {
+                //this.props.onConfirm({newData: 'Данные по новому ТС'});
+                let regNum = document.getElementById('inputRegNum')[0].value;
+                this.props.onConfirm({ regNum: regNum });
+            }
 
         this.setState({ isClicked: !this.state.isClicked });
 
@@ -34,20 +40,12 @@ export default class Modal extends React.Component {
 
         let panels = document.getElementsByClassName('panel');
         panels[0].classList.remove('visible');
-        //console.log(elt);
-    }
-
-    componentDidUpdate() {
-        console.log('Модальное окно обновлено');
     }
 
     render() {
 
-        //console.log("Modal render");
-
         let modalContent = this.props.modalContent ? this.props.modalContent : 'Content is empty';
         let modalTitle = this.props.modalTitle ? this.props.modalTitle : 'Title is empty';
-       //let modalFooter = this.props.modalFooter ? this.props.modalFooter : <button onClick={ this.closeWindow }>Отмена</button>;
         let modalFooter = this.props.modalFooter;
 
         return (
@@ -57,6 +55,7 @@ export default class Modal extends React.Component {
                 </div>
                 <div className='modalContent'>
                     <h2>{ modalContent }</h2>
+                    { this.props.modalAction === 'NewRecord' ? this.modalForm : null }
                 </div>
                 <div className='modalFooter'>
                     <button onClick={ this.handleClickButton.bind(this) }>{ modalFooter }</button>
