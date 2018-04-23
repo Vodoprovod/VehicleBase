@@ -90,6 +90,22 @@ export default class MainPage extends React.Component {
 
     actionNewRecord( fetchedData ) {
         console.log('actionNewRecord получены данные: ', fetchedData);
+
+        let newRecord = {
+            id: Math.random().toFixed(3) * 1000 ,
+            regNum: fetchedData.regNum,
+            cczIn: fetchedData.inputСczIn,
+            notification: "---",
+            cis: "---",
+            inspection: "---",
+            custClearance: "---",
+            cczOut: "---",
+        };
+
+        this.state.data.push(newRecord);
+
+        this.setState({ selectedId: String(newRecord.id) });
+
     }
 
     getModalData = (fetchedModalData) => {
@@ -98,7 +114,7 @@ export default class MainPage extends React.Component {
         if (this.state.modalAction === 'Deleting' && fetchedModalData === true) {
             console.log('Удаление подтверждено');
             this.actionDeleteRecord();
-        } else if (this.state.modalAction === 'NewRecord') {
+        } else if (this.state.modalAction === 'NewRecord' && fetchedModalData !== false) {
             console.log('Добавление подтверждено');
             this.actionNewRecord(fetchedModalData);
         } else {

@@ -18,7 +18,11 @@ export default class ListItem extends React.Component {
     }
 
     formatDate(customDate) {
-        return moment(customDate).format('DD.MM.YYYY HH:mm:ss');
+
+        if ((typeof customDate) === 'string')
+            return "---";
+        else
+            return moment(customDate).format('DD.MM.YYYY HH:mm:ss');
     }
 
     //---------------------------------ПОЧЕМУ НЕ РАБОТАЕТ???------------------------------
