@@ -60,11 +60,24 @@ export default class MainPage extends React.Component {
             modalTitle: 'Добавление записи',
             modalContent: 'Заполните поля',
             modalFooter: 'Сохранить',
-            modalAction: 'NewRecord'
+            modalAction: 'newRecord'
         });
 
         this.showModal();
 
+    }
+
+    onClickBtnEditRecord() {
+        let index = this.state.data.findIndex(_ => _.id === +this.state.selectedId);
+
+        this.setState({
+            modalTitle: 'Редактирование записи',
+            modalContent: `Редактирование записи о ТС № ${ this.state.data[index].regNum }`,
+            modalFooter: 'Сохранить',
+            modalAction: 'editRecord'
+        });
+
+        this.showModal();
     }
 
     // ЗАПИСЬ НЕ УДАЛЯЕТСЯ ИЗ db_temp!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -76,7 +89,7 @@ export default class MainPage extends React.Component {
             modalTitle: 'Удаление записи',
             modalContent: `Удалить запись о ТС № ${ this.state.data[index].regNum } ?`,
             modalFooter: 'Удалить',
-            modalAction: 'Deleting'
+            modalAction: 'deleting'
         });
 
         this.showModal();
@@ -108,15 +121,24 @@ export default class MainPage extends React.Component {
 
     }
 
-    getModalData = (fetchedModalData) => {
-        //console.log('Данные, которые вернуло окно: ', fetchedModalData);
+    actionEditRecord( fetchedData ) {
+        console.log('actionEditRecord получены данные: ', fetchedData);
+        let index = this.state.data.findIndex(_ => _.id === +this.state.selectedId);
 
-        if (this.state.modalAction === 'Deleting' && fetchedModalData === true) {
+        let record = this.state.data[index];
+        this.state.data[index] = { ...record, ...fetchedData};
+    }
+
+    getModalData = (fetchedModalData) => {
+        if (this.state.modalAction === 'deleting' && fetchedModalData === true) {
             console.log('Удаление подтверждено');
             this.actionDeleteRecord();
-        } else if (this.state.modalAction === 'NewRecord' && fetchedModalData !== false) {
+        } else if (this.state.modalAction === 'newRecord' && fetchedModalData !== false) {
             console.log('Добавление подтверждено');
             this.actionNewRecord(fetchedModalData);
+        } else if (this.state.modalAction === 'editRecord' && fetchedModalData !== false) {
+            console.log('Редактирование подтверждено');
+            this.actionEditRecord(fetchedModalData);
         } else {
             console.log('Действие отменено');
         }
@@ -208,8 +230,8 @@ export default class MainPage extends React.Component {
                 <Header sel={ this.state.selectedId } />
                 <div>
                     <button onClick={ this.onClickBtnAddRecord.bind(this) }>Добавить запись</button>
+                    <button onClick={ this.onClickBtnEditRecord.bind(this) }>Редактировать запись</button>
                     <button onClick={ this.onClickBtnDeleteRecord.bind(this) }>Удалить запись</button>
-                    <button onClick={ this.showModal.bind(this) }>Показать окно</button>
                 </div>
                 <table className='mainTable'  >
                     <thead>

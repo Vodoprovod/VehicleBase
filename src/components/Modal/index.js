@@ -12,15 +12,34 @@ export default class Modal extends React.Component {
 
     static tempDate = null;
 
+    optionList = {
+        'Сообщение': 'notification',
+        'ИДК': 'cis',
+        'Досмотр': 'inspection',
+        'Оформление': 'custClearance',
+        'Выезд из ЗТК': 'cczOut'
+    };
+
     modalFormNewRecord = (<div>
-                    <div>
-                        <label>Рег. номер ТС: <input id='inputRegNum' placeholder='Введите рег. номер ТС' /></label>
-                    </div>
-                    <div>
-                        <label>Время взвешивания: <input id='inputСczIn'  /></label>
-                        <button onClick={ this.setCurrentDateTime }>Время</button>
-                    </div>
-                </div>);
+                            <div>
+                                <label>Рег. номер ТС: <input id='inputRegNum' placeholder='Введите рег. номер ТС' /></label>
+                            </div>
+                            <div>
+                                <label>Время взвешивания: <input id='inputСczIn'  /></label>
+                                <button onClick={ this.setCurrentDateTime }>Время</button>
+                            </div>
+                        </div>);
+
+    modalFormEditRecord = (<div>
+                            <label>Editing of the record</label>
+                            <select id='selectOption'>
+                                <option>Сообщение</option>
+                                <option>ИДК</option>
+                                <option>Досмотр</option>
+                                <option>Оформление</option>
+                                <option>Выезд из ЗТК</option>
+                            </select>
+                        </div>);
 
     constructor(props) {
         super(props);
@@ -38,13 +57,17 @@ export default class Modal extends React.Component {
         if (e.target.textContent === 'Отмена')
             this.props.onConfirm(false);
         else
-            if (this.props.modalAction === 'Deleting')
+            if (this.props.modalAction === 'deleting') {
                 this.props.onConfirm(true);
-            else if (this.props.modalAction === 'NewRecord') {
-                //this.props.onConfirm({newData: 'Данные по новому ТС'});
-                //проблема была в том, что getElementById возвращает элемент, а не массив
+            } else if (this.props.modalAction === 'newRecord') {
                 let regNum = document.getElementById('inputRegNum').value;
                 this.props.onConfirm({ regNum: regNum, inputСczIn: Modal.tempDate });
+            } else if (this.props.modalAction === 'editRecord') {
+                Modal.tempDate = new Date();
+                let param = this.optionList[document.getElementById('selectOption').value];
+                let dataForSend = {};
+                dataForSend[param] = Modal.tempDate;
+                this.props.onConfirm(dataForSend);
             }
 
         this.setState({ isClicked: !this.state.isClicked });
@@ -60,6 +83,19 @@ export default class Modal extends React.Component {
         panels[0].classList.remove('visible');
     }
 
+    modalContentPanel(action) {
+        switch (action) {
+            case 'newRecord':
+                return this.modalFormNewRecord;
+                break;
+            case 'editRecord':
+                return this.modalFormEditRecord;
+                break;
+            default:
+                return null;
+        }
+    }
+
     render() {
 
         let modalContent = this.props.modalContent ? this.props.modalContent : 'Content is empty';
@@ -73,7 +109,7 @@ export default class Modal extends React.Component {
                 </div>
                 <div className='modalContent'>
                     <h2>{ modalContent }</h2>
-                    { this.props.modalAction === 'NewRecord' ? this.modalFormNewRecord : null }
+                    { this.modalContentPanel(this.props.modalAction) }
                 </div>
                 <div className='modalFooter'>
                     <button onClick={ this.handleClickButton.bind(this) }>{ modalFooter }</button>
