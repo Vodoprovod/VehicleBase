@@ -105,10 +105,10 @@ export default class Modal extends React.Component {
         return (
             <div className='modal'>
                 <div className='modalTitle'>
-                    <h1>{ modalTitle }</h1>
+                    <h4 className='modalTitleLabel'>{ modalTitle }</h4>
                 </div>
                 <div className='modalContent'>
-                    <h2>{ modalContent }</h2>
+                    <h3 className='modalContentLabel'>{ modalContent }</h3>
                     { this.modalContentPanel(this.props.modalAction) }
                 </div>
                 <div className='modalFooter'>
