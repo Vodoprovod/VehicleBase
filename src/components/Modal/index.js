@@ -22,23 +22,27 @@ export default class Modal extends React.Component {
 
     modalFormNewRecord = (<div>
                             <div>
-                                <label>Рег. номер ТС: <input id='inputRegNum' placeholder='Введите рег. номер ТС' /></label>
+                                <p><label>Рег. номер ТС: </label></p>
+                                <p><input id='inputRegNum' placeholder='Введите рег. номер ТС' /></p>
                             </div>
                             <div>
-                                <label>Время взвешивания: <input id='inputСczIn'  /></label>
-                                <button onClick={ this.setCurrentDateTime }>Время</button>
+                                <p><label>Время взвешивания: </label></p>
+                                <p>
+                                    <input id='inputСczIn'  />
+                                    <button onClick={ this.setCurrentDateTime }> Сейчас </button>
+                                </p>
                             </div>
                         </div>);
 
     modalFormEditRecord = (<div>
-                            <label>Editing of the record</label>
-                            <select id='selectOption'>
+                            <p><label>Добавить этап контроля:</label></p>
+                            <p><select id='selectOption'>
                                 <option>Сообщение</option>
                                 <option>ИДК</option>
                                 <option>Досмотр</option>
                                 <option>Оформление</option>
                                 <option>Выезд из ЗТК</option>
-                            </select>
+                            </select></p>
                         </div>);
 
     constructor(props) {

@@ -1,8 +1,9 @@
 import React from 'react';
-import data from '../../database/db_temp';
+// import data from '../../database/db_temp';
 import moment from 'moment';
 
 import Header from '../../components/Header/index';
+import { MainPage } from '../../pages/main/index';
 
 export default class DetailsItemPage extends React.Component {
 
@@ -26,16 +27,24 @@ export default class DetailsItemPage extends React.Component {
 
     getCurrentItemFromDB() {
 
-        return data.find(_ => _.id === +this.props.match.params.number);
+        // для работы с временной БД
+        //return data.find(_ => _.id === +this.props.match.params.number);
+
+        return MainPage.currentData.find(_ => _.id === +this.props.match.params.number);
 
     }
 
     formatDate(customDate) {
         //return moment(customDate).format('DD.MM.YYYY HH:mm:ss');
-        if ((typeof customDate) === 'string')
-            return "---";
-        else
+        // if ((typeof customDate) === 'string')
+        //     return "---";
+        // else
+        //     return moment(customDate).format('DD.MM.YYYY HH:mm:ss');
+
+        if ((typeof customDate) === 'object' || (typeof new Date(customDate)) === 'object')
             return moment(customDate).format('DD.MM.YYYY HH:mm:ss');
+        else
+            return "---";
     }
 
     render() {

@@ -1,7 +1,8 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import moment from 'moment';
 
-import data from '../../database/db_temp';
+//import data from '../../database/db_temp';
 import ListItem from './item';
 import './styles.less';
 import Header from '../../components/Header/index';
@@ -13,14 +14,27 @@ export default class MainPage extends React.Component {
 
     static path = '/';
 
+    static currentData = [];
+
+    static selectedItemId = 0;
+
     state = {
-        selectedId: Header.selectedItem ? String(Header.selectedItem) : '1',
-        data: data,
+        selectedId: Header.selectedItem ? String(Header.selectedItem) : String(MainPage.selectedItemId),
+        data: [],
         modalTitle: null,
         modalContent: null,
         modalFooter: null,
         modalAction: null
     };
+
+    // state = {
+    //     selectedId: Header.selectedItem ? String(Header.selectedItem) : '1',
+    //     data: data,
+    //     modalTitle: null,
+    //     modalContent: null,
+    //     modalFooter: null,
+    //     modalAction: null
+    // };
 
     constructor(props) {
         super(props);
@@ -33,7 +47,13 @@ export default class MainPage extends React.Component {
         tableBody.childNodes.forEach(_ => _.classList.remove('selected'));
         elt.classList.add('selected');
 
-        this.setState({ selectedId: String(elt.firstChild.textContent) });
+        //console.log('handleOnClick clicked id: ', String(elt.firstChild.textContent));
+
+        this.setState({ selectedId: elt.firstChild.textContent });
+        MainPage.selectedItemId = +elt.firstChild.textContent;
+
+        //console.log('handleOnClick selectedItemId: ', MainPage.selectedItemId);
+        //console.log('handleOnClick selectedId: ', this.state.selectedId);
     };
 
     // ЗАПИСЬ НЕ ДОБАВЛЯЕТСЯ В db_temp, this.state.nextId - не записывается
@@ -80,7 +100,6 @@ export default class MainPage extends React.Component {
         this.showModal();
     }
 
-    // ЗАПИСЬ НЕ УДАЛЯЕТСЯ ИЗ db_temp!!!!!!!!!!!!!!!!!!!!!!!!!!
     onClickBtnDeleteRecord() {
 
         let index = this.state.data.findIndex(_ => _.id === +this.state.selectedId);
@@ -97,15 +116,19 @@ export default class MainPage extends React.Component {
 
     actionDeleteRecord() {
         let index = this.state.data.findIndex(_ => _.id === +this.state.selectedId);
-        this.state.data.splice(index, 1);
-        this.setState({ selectedId: '1' });
+
+        if ( this.deleteRecord(this.state.selectedId) ) {
+            this.state.data.splice(index, 1);
+            this.setState({ selectedId: '1' });
+        } else {
+            alert('Ошибка в процессе удаления записи');
+        }
     }
 
     actionNewRecord( fetchedData ) {
-        console.log('actionNewRecord получены данные: ', fetchedData);
 
         let newRecord = {
-            id: Math.random().toFixed(3) * 1000 ,
+            id: Math.random().toFixed(5) * 100000 ,
             regNum: fetchedData.regNum,
             cczIn: fetchedData.inputСczIn,
             notification: "---",
@@ -115,29 +138,34 @@ export default class MainPage extends React.Component {
             cczOut: "---",
         };
 
-        this.state.data.push(newRecord);
-
-        this.setState({ selectedId: String(newRecord.id) });
-
+        if ( this.addRecord(newRecord) ) {
+            this.state.data.push(newRecord);
+            this.setState({ selectedId: String(newRecord.id) });
+        } else {
+            alert('Ошибка в процессе добавления записи');
+        }
     }
 
     actionEditRecord( fetchedData ) {
-        console.log('actionEditRecord получены данные: ', fetchedData);
         let index = this.state.data.findIndex(_ => _.id === +this.state.selectedId);
 
-        let record = this.state.data[index];
-        this.state.data[index] = { ...record, ...fetchedData};
+        if (this.editRecord( this.state.selectedId, fetchedData )){
+            let record = this.state.data[index];
+            this.state.data[index] = { ...record, ...fetchedData};
+        } else {
+            alert('Ошибка в процессе редактирования записи');
+        }
     }
 
     getModalData = (fetchedModalData) => {
         if (this.state.modalAction === 'deleting' && fetchedModalData === true) {
-            console.log('Удаление подтверждено');
+            //console.log('Удаление подтверждено');
             this.actionDeleteRecord();
         } else if (this.state.modalAction === 'newRecord' && fetchedModalData !== false) {
-            console.log('Добавление подтверждено');
+            //console.log('Добавление подтверждено');
             this.actionNewRecord(fetchedModalData);
         } else if (this.state.modalAction === 'editRecord' && fetchedModalData !== false) {
-            console.log('Редактирование подтверждено');
+            //console.log('Редактирование подтверждено');
             this.actionEditRecord(fetchedModalData);
         } else {
             console.log('Действие отменено');
@@ -158,6 +186,73 @@ export default class MainPage extends React.Component {
         panels[0].classList.add('visible');
     }
 
+    async showData() {
+        try {
+
+            const response = await fetch('http://localhost:3000/api/vehiclelist');
+            const data = await response.json();
+
+            if (MainPage.selectedItemId === 0)
+                MainPage.selectedItemId = await +data[0].id;
+
+            this.setState({ data });
+
+            MainPage.currentData = data;
+
+        } catch (err) {
+            console.log(err)
+        }
+    }
+
+    async addRecord( newRecord ) {
+
+        const request = new Request('http://localhost:3000/api/addvehicle', {
+            method: 'POST',
+            headers: new Headers({ 'Content-Type': 'application/json' }),
+            body: JSON.stringify(newRecord)
+        });
+
+        try {
+            const response = await fetch(request);
+            const data = await response.json();
+            return true;
+        } catch (err) {
+            console.log('addRecord response error: ', err);
+            return false;
+        }
+    }
+
+    async deleteRecord(id) {
+        const request = new Request('http://localhost:3000/api/deletevehicle/' + id, {
+            method: 'DELETE'
+        });
+
+        try {
+            const response = await fetch(request);
+            return true;
+        } catch (err) {
+            console.log('deleteRecord response error: ', err);
+            return false;
+        }
+    }
+
+    async editRecord( id, changedData ) {
+        const request = new Request('http://localhost:3000/api/editvehicle/' + id, {
+            method: 'POST',
+            headers: new Headers({ 'Content-Type': 'application/json' }),
+            body: JSON.stringify(changedData)
+        });
+
+        try {
+            const response = await fetch(request);
+            const data = await response.json();
+            return true;
+        } catch (err) {
+            console.log('editRecord response error: ', err);
+            return false;
+        }
+    }
+
     //разобраться с управлением клавишами-стрелками
     // handleOnKeyDown = (e) => {
     //
@@ -166,20 +261,52 @@ export default class MainPage extends React.Component {
     //
     // };
 
+    static formatDate(customDate) {
+        // заморочки с определениями типов связаны с тем, что данные сейчас могут приходить как в формате даты (из временной БД),
+        // так и в формате строки (из postgresql)
+        if ((typeof customDate) === 'object' || (typeof new Date(customDate)) === 'object')
+            return moment(customDate).format('DD.MM.YYYY HH:mm:ss');
+        else
+            return "---";
+    }
+
     renderItems(item, idx) {
+
+        let _cczIn = String(MainPage.formatDate(item.cczIn));
+        let _notification = String(MainPage.formatDate(item.notification));
+        let _cis = String(MainPage.formatDate(item.cis));
+        let _inspection = String(MainPage.formatDate(item.inspection));
+        let _custClearance = String(MainPage.formatDate(item.custClearance));
+        let _cczOut = String(MainPage.formatDate(item.cczOut));
+
         return (
             <ListItem
                 key={ idx }
                 id={ item.id }
                 regNum={ item.regNum }
-                cczIn={ item.cczIn }
-                notification={ item.notification }
-                cis={ item.cis }
-                inspection={ item.inspection }
-                custClearance={ item.custClearance }
-                cczOut={ item.cczOut }
+                cczIn={ _cczIn }
+                notification={ _notification }
+                cis={ _cis }
+                inspection={ _inspection }
+                custClearance={ _custClearance }
+                cczOut={ _cczOut }
             />
         );
+
+        // return (
+        //     <ListItem
+        //         key={ idx }
+        //         id={ item.id }
+        //         regNum={ item.regNum }
+        //         cczIn={ item.cczIn }
+        //         notification={ item.notification }
+        //         cis={ item.cis }
+        //         inspection={ item.inspection }
+        //         custClearance={ item.custClearance }
+        //         cczOut={ item.cczOut }
+        //     />
+        // );
+
     }
 
     // функция используется для позиционирования рамки-выделения в таблице
@@ -187,10 +314,13 @@ export default class MainPage extends React.Component {
 
         let items = document.getElementsByClassName('item');
 
+        //console.log('selectRecord function: ', this.state.selectedId);
+
         let arr = [];
         arr.push.apply(arr, items);
         arr.forEach(_ => _.classList.remove('selected'));
         arr.forEach(_ => {
+            //if (_.firstChild.textContent === String(MainPage.selectedItemId)) _.classList.add('selected');
             if (_.firstChild.textContent === this.state.selectedId) _.classList.add('selected');
         });
     }
@@ -198,20 +328,31 @@ export default class MainPage extends React.Component {
     // componentWillMount и componentDidMount здесь позволяют восстановить положение рамки-выделения в таблице
     // после возвращения из Подробностей
     componentWillMount() {
-        this.setState({ selectedId: Header.selectedItem ? String(Header.selectedItem) : '1' });
+        //console.log('componentWillMount => setState => selectRecord', MainPage.selectedItemId);
+
+        this.setState({ selectedId: Header.selectedItem ? String(Header.selectedItem) : String(MainPage.selectedItemId) });
+        //this.setState({ selectedId: Header.selectedItem ? String(Header.selectedItem) : '1' });
+
+        this.selectRecord();
     }
 
     componentDidMount() {
-        this.setState({ data });
-        this.selectRecord();
-        //console.log('componentDidMount');
+
+        //console.log('componentDidMount => showData', MainPage.selectedItemId);
+
+        //this.setState({ data });    //для работы с временной БД
+        this.showData();
+
+        //console.log('selected componentDidMount: ', MainPage.selectedItemId);
+
+        //this.selectRecord();
     }
 
     // componentDidUpdate здесь используется для позиционирования рамки-выделения в таблице
     // после добавления записи
     componentDidUpdate() {
+        //console.log('componentDidUpdate => selectRecord', this.state.selectedId);
         this.selectRecord();
-        //console.log('componentDidUpdate');
     }
 
     render() {
@@ -259,9 +400,4 @@ export default class MainPage extends React.Component {
 
 }
 
-// {/*<Modal*/}
-//     {/*modalTitle={ this.state.modalTitle }*/}
-//     {/*modalContent={ this.state.modalContent }*/}
-//     {/*modalFooter={ this.state.modalFooter }*/}
-//     {/*onConfirm={ this.getModalData }*/}
-// {/*/>*/}
+

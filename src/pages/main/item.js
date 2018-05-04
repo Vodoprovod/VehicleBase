@@ -14,18 +14,24 @@ export default class ListItem extends React.Component {
             selected: false
         };
 
-        bindAll(this, [ 'formatDate' ]);
+        //bindAll(this, [ 'formatDate' ]);
     }
 
-    formatDate(customDate) {
+    // formatDate(customDate) {
+    //
+    //     //if ((typeof customDate) === 'string')
+    //     if ((typeof customDate) === 'integer')
+    //         return "---";
+    //     else
+    //         return moment(customDate).format('DD.MM.YYYY HH:mm:ss');
+    // }
 
-        if ((typeof customDate) === 'string')
-            return "---";
-        else
-            return moment(customDate).format('DD.MM.YYYY HH:mm:ss');
-    }
 
-    //---------------------------------ПОЧЕМУ НЕ РАБОТАЕТ???------------------------------
+    handleOnDoubleClick = () => {
+        this.setState({ redirect: true });
+    };
+
+
     // renderItem = (item, idx) => {
     //
     //     const format = (item === 'id' || item === 'regNum')
@@ -34,40 +40,15 @@ export default class ListItem extends React.Component {
     //
     //     return (
     //         <td key={ idx }>
-    //             <Link to={ `/details/${ this.props.id }` }>
-    //                 { format(this.props[item]) }
-    //             </Link>
+    //             { format(this.props[item]) }
     //         </td>
     //     );
-    // }
-    //
-    // render() {
-    //     return (
-    //         <tr className="item">
-    //             { Object.keys(this.props).map(this.renderItem) }
-    //         </tr>
-    //     );
-    // }
-
-    handleOnDoubleClick = () => {
-        this.setState({ redirect: true });
-    };
-
-    handleOnClick = (e) => {
-        //console.log(e.target.parentElement);
-        //this.setState({ selected: true });
-        //this.state.selected ? this.setState({ selected: false }) : this.setState({ selected: true }) ;
-    };
+    // };
 
     renderItem = (item, idx) => {
-
-        const format = (item === 'id' || item === 'regNum')
-            ? identity // identity(arg) = arg
-            : this.formatDate;
-
         return (
             <td key={ idx }>
-                { format(this.props[item]) }
+                { this.props[item] }
             </td>
         );
     };
@@ -75,13 +56,13 @@ export default class ListItem extends React.Component {
     render() {
 
         if (this.state.redirect) {
+            console.log('Item redirect id: ', this.props.id);
             return <Redirect push to={ `/details/${ this.props.id }` } />;
         }
 
         return (
             <tr className={ this.state.selected ? 'item selected' : 'item' }
                 onDoubleClick={ this.handleOnDoubleClick }
-                onClick={ this.handleOnClick }
             >
                 { Object.keys(this.props).map(this.renderItem) }
             </tr>
