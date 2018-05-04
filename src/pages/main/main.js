@@ -56,7 +56,6 @@ export default class MainPage extends React.Component {
         //console.log('handleOnClick selectedId: ', this.state.selectedId);
     };
 
-    // ЗАПИСЬ НЕ ДОБАВЛЯЕТСЯ В db_temp, this.state.nextId - не записывается
     onClickBtnAddRecord() {
 
         //===========================ЗАГЛУШКА============================
