@@ -3,6 +3,7 @@ import React, { Component, PropTypes } from 'react';
 import { MainRoutes } from './pages/main/index';
 import { DetailsRoutes } from './pages/details/index';
 import { HelpRoutes } from './pages/help/index';
+import { TemporaryRoutes } from './pages/temporary/index';
 
 export default class App extends Component {
 
@@ -14,6 +15,7 @@ export default class App extends Component {
                 { MainRoutes }
                 { DetailsRoutes }
                 { HelpRoutes }
+                { TemporaryRoutes }
             </div>
         );
     }

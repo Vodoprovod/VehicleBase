@@ -1,5 +1,4 @@
 import React from 'react';
-import moment from 'moment';
 import { bindAll } from 'lodash';
 import { Link, Redirect } from 'react-router-dom';
 import { identity } from 'lodash'
@@ -13,24 +12,11 @@ export default class ListItem extends React.Component {
             redirect: false,
             selected: false
         };
-
-        //bindAll(this, [ 'formatDate' ]);
     }
-
-    // formatDate(customDate) {
-    //
-    //     //if ((typeof customDate) === 'string')
-    //     if ((typeof customDate) === 'integer')
-    //         return "---";
-    //     else
-    //         return moment(customDate).format('DD.MM.YYYY HH:mm:ss');
-    // }
-
 
     handleOnDoubleClick = () => {
         this.setState({ redirect: true });
     };
-
 
     // renderItem = (item, idx) => {
     //
@@ -56,7 +42,7 @@ export default class ListItem extends React.Component {
     render() {
 
         if (this.state.redirect) {
-            console.log('Item redirect id: ', this.props.id);
+            //console.log('Item redirect id: ', this.props.id);
             return <Redirect push to={ `/details/${ this.props.id }` } />;
         }
 

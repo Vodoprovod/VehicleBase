@@ -27,14 +27,7 @@ export default class MainPage extends React.Component {
         modalAction: null
     };
 
-    // state = {
-    //     selectedId: Header.selectedItem ? String(Header.selectedItem) : '1',
-    //     data: data,
-    //     modalTitle: null,
-    //     modalContent: null,
-    //     modalFooter: null,
-    //     modalAction: null
-    // };
+
 
     constructor(props) {
         super(props);
@@ -55,6 +48,10 @@ export default class MainPage extends React.Component {
         //console.log('handleOnClick selectedItemId: ', MainPage.selectedItemId);
         //console.log('handleOnClick selectedId: ', this.state.selectedId);
     };
+
+    getIndex() {
+        return this.state.data.findIndex(_ => _.id === +this.state.selectedId);
+    }
 
     onClickBtnAddRecord() {
 
@@ -87,7 +84,8 @@ export default class MainPage extends React.Component {
     }
 
     onClickBtnEditRecord() {
-        let index = this.state.data.findIndex(_ => _.id === +this.state.selectedId);
+        //let index = this.state.data.findIndex(_ => _.id === +this.state.selectedId);
+        let index = this.getIndex();
 
         this.setState({
             modalTitle: 'Редактирование записи',
@@ -101,7 +99,8 @@ export default class MainPage extends React.Component {
 
     onClickBtnDeleteRecord() {
 
-        let index = this.state.data.findIndex(_ => _.id === +this.state.selectedId);
+        //let index = this.state.data.findIndex(_ => _.id === +this.state.selectedId);
+        let index = this.getIndex();
 
         this.setState({
             modalTitle: 'Удаление записи',
@@ -114,7 +113,8 @@ export default class MainPage extends React.Component {
     }
 
     actionDeleteRecord() {
-        let index = this.state.data.findIndex(_ => _.id === +this.state.selectedId);
+        //let index = this.state.data.findIndex(_ => _.id === +this.state.selectedId);
+        let index = this.getIndex();
 
         if ( this.deleteRecord(this.state.selectedId) ) {
             this.state.data.splice(index, 1);
@@ -146,7 +146,8 @@ export default class MainPage extends React.Component {
     }
 
     actionEditRecord( fetchedData ) {
-        let index = this.state.data.findIndex(_ => _.id === +this.state.selectedId);
+        //let index = this.state.data.findIndex(_ => _.id === +this.state.selectedId);
+        let index = this.getIndex();
 
         if (this.editRecord( this.state.selectedId, fetchedData )){
             let record = this.state.data[index];
