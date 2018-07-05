@@ -1,12 +1,14 @@
-import { ADD_ELEMENT } from '../actions/testPageActions';
+import { ADD_ELEMENT, DELETE_ELEMENT } from '../actions/testPageActions';
 
-const stateArr = [1, 'ddd', 34, 'aaa'];
+const stateArr = ['1', 'ddd', '34', 'aaa'];
 
 
 function stateArray(state = stateArr, action ) {
     switch (action.type) {
         case ADD_ELEMENT:
             return [...state, action.element];
+        case DELETE_ELEMENT:
+            return state.filter((elt, idx) => idx != action.index);
         default:
             return state;
     }
