@@ -10,7 +10,9 @@ function stateUpdateStatus(state = stateUpdate, action) {
         case TOGGLE_LIST_LOADING:
             return {...state, isListLoading: !state.isListLoading };
         case TOGGLE_ERROR_LIST_LOADING:
+            console.log('Error from reducer ' + state.isErrorListLoading);
             return { ...state, isErrorListLoading: !state.isErrorListLoading };
+            //return { ...state, isErrorListLoading: true };
         default:
             return state;
     }

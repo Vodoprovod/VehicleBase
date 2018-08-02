@@ -37,3 +37,30 @@ export const toggleErrorListLoading = () => {
         type: TOGGLE_ERROR_LIST_LOADING
     }
 };
+
+export const fetchItems = (url) => {
+    return async (dispatch) => {
+        dispatch(toggleListLoading());
+
+        try {
+
+            const response = await fetch(url);
+
+            if(response.ok) {
+                dispatch(toggleErrorListLoading());
+                throw Error(response.statusText);
+            }
+
+            dispatch(toggleListLoading());
+
+            const stateArray = await response.json();
+
+            dispatch(showElements(stateArray));
+
+        } catch (err) {
+            dispatch(toggleListLoading());
+            dispatch(toggleErrorListLoading());
+            console.log('Catched error: ' + err);
+        }
+    }
+};

@@ -1,13 +1,14 @@
 import 'babel-polyfill';
 import React from 'react';
-import {render} from 'react-dom';
-import {createStore} from 'redux';
-import {Provider} from 'react-redux';
-import {BrowserRouter} from 'react-router-dom';
+import { render } from 'react-dom';
+import { createStore, applyMiddleware } from 'redux';
+import { Provider } from 'react-redux';
+import thunk from 'redux-thunk';
+import { BrowserRouter } from 'react-router-dom';
 import App from './App';
 import allReducers from './reducers';
 
-let store = createStore(allReducers);
+let store = createStore(allReducers, applyMiddleware(thunk));
 
 render((
         <Provider store={ store }>

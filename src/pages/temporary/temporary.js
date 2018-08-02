@@ -4,6 +4,7 @@ import { deleteElement } from '../../actions/testPageActions';
 import { showElements } from '../../actions/testPageActions';
 import { toggleListLoading } from '../../actions/testPageActions';
 import { toggleErrorListLoading } from '../../actions/testPageActions';
+import { fetchItems } from '../../actions/testPageActions';
 
 import { connect } from 'react-redux';
 
@@ -24,7 +25,8 @@ const mapDispatchToProps = (dispatch) => {
         onElementClickProp: idx => dispatch(deleteElement(idx)),
         onComponentWillMount: (stateArray) => dispatch(showElements(stateArray)),
         onToggleListLoading: () => dispatch(toggleListLoading()),
-        onToggleErrorListLoading: () => dispatch(toggleErrorListLoading())
+        onToggleErrorListLoading: () => dispatch(toggleErrorListLoading()),
+        fetchData: (url) => dispatch(fetchItems(url))
     };
 };
 

@@ -6,44 +6,32 @@ class TemporaryPage extends React.Component {
 
     static path = '/temporary';
 
-    // constructor(props) {
+
+    // async fetchData(url) {
     //
-    //     super(props);
+    //     this.props.onToggleListLoading();
     //
-    //     this.state = {
-    //         stateArray: [],
-    //         isListLoading: false,
-    //         isErrorListLoading: false
-    //     };
+    //     try {
     //
-    //     //this.onElementClickHandle = this.onElementClickHandle.bind(this);
+    //         const response = await fetch(url);
+    //
+    //         if(!response.ok) {
+    //             this.props.onToggleErrorListLoading();
+    //             throw Error(response.statusText);
+    //         }
+    //
+    //         if (this.props.isErrorListLoading) this.props.onToggleErrorListLoading();
+    //         this.props.onToggleListLoading();
+    //
+    //         const stateArray = await response.json();
+    //
+    //         this.props.onComponentWillMount(stateArray);
+    //
+    //     } catch (err) {
+    //         this.props.onToggleErrorListLoading();
+    //         console.log('Catched error: ' + err);
+    //     }
     // }
-
-    async fetchData(url) {
-
-        this.props.onToggleListLoading();
-
-        try {
-
-            const response = await fetch(url);
-
-            if(!response.ok) {
-                this.props.onToggleErrorListLoading();
-                throw Error(response.statusText);
-            }
-
-            if (this.props.isErrorListLoading) this.props.onToggleErrorListLoading();
-            this.props.onToggleListLoading();
-
-            const stateArray = await response.json();
-
-            this.props.onComponentWillMount(stateArray);
-
-        } catch (err) {
-            this.props.onToggleErrorListLoading();
-            console.log('Catched error: ' + err);
-        }
-    }
 
     renderItem(item, index) {
         let element = item.value;
@@ -80,20 +68,21 @@ class TemporaryPage extends React.Component {
     focusOnInput = () => document.getElementById('tempInput').focus();
 
     componentWillMount() {
-        //this.props.onComponentWillMount();
-
-        this.fetchData('http://localhost:3000/api/temporarylist');
+        //this.fetchData('http://localhost:3000/api/temporarylist');
+        this.props.fetchData('http://localhost:3000/api/temporarylist');
     }
 
     render() {
 
+        console.log('render component isErrorListLoading ---> ' + this.props.isErrorListLoading);
+        console.log('render component isListLoading ---> ' + this.props.isListLoading);
+
         if(this.props.isErrorListLoading)
-        //if(this.state.isErrorListLoading)
             return <div><h1>Error list loading!</h1></div>;
 
         if(this.props.isListLoading)
-        //if(this.state.isListLoading)
             return <div><h1>List loading...</h1></div>;
+
 
         return (
             <div className='temporaryPage'>

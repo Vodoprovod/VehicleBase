@@ -12,8 +12,6 @@ function stateArray(state = stateArr.tempArr, action ) {
         case DELETE_ELEMENT:
             return state.filter((elt, idx) => idx != action.index);
         case SHOW_ELEMENTS:
-            //console.log('onComponentWillMount');
-            //console.log('stateArray from controller: ' + action.stateArray);
             return state = action.stateArray;
         default:
             return state;
