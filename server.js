@@ -175,3 +175,29 @@ app.delete('/api/deletevehicle/:id', function(request, response) {
 /**
  * end of PG strings==================================================================================================
  */
+
+/*
+ * ===========================================for temporary page======================================================
+ *
+ *
+ */
+
+
+app.get('/api/temporarylist', function(request, response) {
+    pool.connect((err, db, done) => {
+        if (err) {
+            return response.status(400).send(err);
+        } else {
+            db.query('SELECT "value" FROM public.tempredux',
+                (err, table) => {
+                    done();
+                    if (err) {
+                        return response.status(400).send(err);
+                    } else {
+                        //console.log(table.rows);
+                        return response.status(201).send(table.rows);
+                    }
+                })
+        }
+    });
+});

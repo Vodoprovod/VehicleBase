@@ -192,6 +192,8 @@ export default class MainPage extends React.Component {
             const response = await fetch('http://localhost:3000/api/vehiclelist');
             const data = await response.json();
 
+            //console.log(data);
+
             if (MainPage.selectedItemId === 0)
                 MainPage.selectedItemId = await +data[0].id;
 
