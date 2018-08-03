@@ -188,7 +188,7 @@ app.get('/api/temporarylist', function(request, response) {
         if (err) {
             return response.status(400).send(err);
         } else {
-            db.query('SELECT "value" FROM public.tempredux',
+            db.query('SELECT "id", "value" FROM public.tempredux',
                 (err, table) => {
                     done();
                     if (err) {
@@ -198,6 +198,51 @@ app.get('/api/temporarylist', function(request, response) {
                         return response.status(201).send(table.rows);
                     }
                 })
+        }
+    });
+});
+
+app.post('/api/additem', function(request, response) {
+
+    var id = request.body.id;
+    var val = request.body.val;
+    let values = [id, val];
+
+    pool.connect((err, db, done) => {
+        if (err) {
+            return response.status(400).send(err);
+        } else {
+            db.query('INSERT INTO public.tempredux ("id", "value") VALUES ($1, $2)', [...values],
+                (err, table) => {
+                    done();
+                    if (err) {
+                        return response.status(400).send(err);
+                    } else {
+                        console.log('Data inserted');
+                        return response.status(201).send(table.rows);
+                    }
+                })
+        }
+    });
+});
+
+app.delete('/api/deleteitem/:id', function(request, response) {
+
+    var id = request.params.id;
+
+    pool.connect((err, db, done) => {
+        if (err) {
+            return response.status(400).send(err);
+        } else {
+            db.query('DELETE FROM public.tempredux WHERE id = $1', [id], (err, table) => {
+                //done();
+                if (err) {
+                    return response.status(400).send(err);
+                } else {
+                    //console.log('Data deleted');
+                    return response.status(201).send({ message: 'Success in deleting record' });
+                }
+            });
         }
     });
 });

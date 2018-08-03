@@ -127,7 +127,7 @@ export default class MainPage extends React.Component {
     actionNewRecord( fetchedData ) {
 
         let newRecord = {
-            id: Math.random().toFixed(5) * 100000 ,
+        id: Math.random().toFixed(5) * 100000 ,
             regNum: fetchedData.regNum,
             cczIn: fetchedData.inputСczIn,
             notification: "---",

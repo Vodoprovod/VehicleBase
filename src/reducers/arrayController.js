@@ -1,7 +1,13 @@
 import { ADD_ELEMENT, DELETE_ELEMENT, SHOW_ELEMENTS } from '../actions/testPageActions';
 
 const stateArr = {
-    tempArr: ['1', 'ddd', '34', 'aaa', 'ggggg']
+    tempArr: [
+        { id: 1, value: '1' },
+        { id: 2, value: 'ddd' },
+        { id: 3, value: '34' },
+        { id: 4, value: 'aaa' },
+        { id: 5, value: 'ggggg' }
+    ]
 };
 
 

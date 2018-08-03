@@ -6,40 +6,18 @@ class TemporaryPage extends React.Component {
 
     static path = '/temporary';
 
-
-    // async fetchData(url) {
-    //
-    //     this.props.onToggleListLoading();
-    //
-    //     try {
-    //
-    //         const response = await fetch(url);
-    //
-    //         if(!response.ok) {
-    //             this.props.onToggleErrorListLoading();
-    //             throw Error(response.statusText);
-    //         }
-    //
-    //         if (this.props.isErrorListLoading) this.props.onToggleErrorListLoading();
-    //         this.props.onToggleListLoading();
-    //
-    //         const stateArray = await response.json();
-    //
-    //         this.props.onComponentWillMount(stateArray);
-    //
-    //     } catch (err) {
-    //         this.props.onToggleErrorListLoading();
-    //         console.log('Catched error: ' + err);
-    //     }
-    // }
+    static url='http://localhost:3000/api/temporarylist';
 
     renderItem(item, index) {
         let element = item.value;
+        let elementId = item.id;
+
+        //console.log('item ---> ' + item.id);
 
         return (
             <div
                 key={ index }
-                id={ index }
+                id={ elementId }
                 className='record'
                 /*onClick={ this.onElementClickHandle }*/
             >
@@ -48,19 +26,28 @@ class TemporaryPage extends React.Component {
         )
     }
 
+    //Добавление записи
     onClickHandle = () => {
-        let text = this.refs.win.value;
-        //this.props.dispatch(addElement(text));
-        this.props.onClickProp(text);
+
+        let newRecord = {
+            id: Math.random().toFixed(5) * 100000 ,
+            val: this.refs.win.value
+        };
+
+        this.props.onClickProp(newRecord, TemporaryPage.url);
+        //this.props.fetchData(TemporaryPage.url);
+
         this.refs.win.value = '';
         this.focusOnInput();
     };
 
+    //Удаление записи
     onElementClickHandle = (e) => {
         if (e.target.className === 'record') {
-            let index = e.target.id;
+            let id = e.target.id;
             //this.props.dispatch(deleteElement(index));
-            this.props.onElementClickProp(index);
+
+            this.props.onElementClickProp(id, TemporaryPage.url);
             this.focusOnInput();
         }
     };
@@ -69,19 +56,19 @@ class TemporaryPage extends React.Component {
 
     componentWillMount() {
         //this.fetchData('http://localhost:3000/api/temporarylist');
-        this.props.fetchData('http://localhost:3000/api/temporarylist');
+        this.props.fetchData(TemporaryPage.url);
     }
 
     render() {
 
-        console.log('render component isErrorListLoading ---> ' + this.props.isErrorListLoading);
-        console.log('render component isListLoading ---> ' + this.props.isListLoading);
+        // console.log('render component isErrorListLoading ---> ' + this.props.isErrorListLoading);
+        // console.log('render component isListLoading ---> ' + this.props.isListLoading);
 
-        if(this.props.isErrorListLoading)
-            return <div><h1>Error list loading!</h1></div>;
-
-        if(this.props.isListLoading)
-            return <div><h1>List loading...</h1></div>;
+        // if(this.props.isErrorListLoading)
+        //     return <div><h1>Error list loading!</h1></div>;
+        //
+        // if(this.props.isListLoading)
+        //     return <div><h1>List loading...</h1></div>;
 
 
         return (
@@ -93,9 +80,13 @@ class TemporaryPage extends React.Component {
                     <button onClick={ this.onClickHandle } >Add some shit</button>
                 </p>
                 <hr/>
-                <div onClick={ this.onElementClickHandle } className='tableBox'>
-                    { this.props.stateArray.map(this.renderItem)}
-                </div>
+                { this.props.isErrorListLoading ? <div><h1>Error list loading!</h1></div> :
+                    this.props.isListLoading ? <div><h1>List loading...</h1></div> :
+                        <div onClick={ this.onElementClickHandle } className='tableBox'>
+                            { this.props.stateArray.map(this.renderItem)}
+                        </div>
+                }
+
             </div>
         )
     }
@@ -148,3 +139,37 @@ export default TemporaryPage;
 //         console.log("Error at catch block: " + e);
 //         this.setState({ isErrorListLoading: true });
 //     });
+
+
+// async fetchData(url) {
+//
+//     this.props.onToggleListLoading();
+//
+//     try {
+//
+//         const response = await fetch(url);
+//
+//         if(!response.ok) {
+//             this.props.onToggleErrorListLoading();
+//             throw Error(response.statusText);
+//         }
+//
+//         if (this.props.isErrorListLoading) this.props.onToggleErrorListLoading();
+//         this.props.onToggleListLoading();
+//
+//         const stateArray = await response.json();
+//
+//         this.props.onComponentWillMount(stateArray);
+//
+//     } catch (err) {
+//         this.props.onToggleErrorListLoading();
+//         console.log('Catched error: ' + err);
+//     }
+// }
+
+
+
+//
+// <div onClick={ this.onElementClickHandle } className='tableBox'>
+//     { this.props.stateArray.map(this.renderItem)}
+// </div>
