@@ -29,9 +29,9 @@ export default class MainPage extends React.Component {
 
 
 
-    constructor(props) {
-        super(props);
-    }
+    // constructor(props) {
+    //     super(props);
+    // }
 
     handleOnClick = (e) => {
         const elt = e.target.parentElement;
@@ -54,23 +54,6 @@ export default class MainPage extends React.Component {
     }
 
     onClickBtnAddRecord() {
-
-        //===========================ЗАГЛУШКА============================
-        // let newRecord = {
-        //     id: Math.random().toFixed(3) * 1000 ,
-        //     regNum: 'AAA' + Math.random().toFixed(3) * 1000,
-        //     cczIn: new Date(),
-        //     notification: new Date(),
-        //     cis: new Date(),
-        //     inspection: new Date(),
-        //     custClearance: new Date(),
-        //     cczOut: new Date(),
-        // };
-        //
-        // this.state.data.push(newRecord);
-        //
-        // this.setState({ selectedId: String(newRecord.id) });
-        //============================КОНЕЦ ЗАГЛУШКИ===========================
 
         this.setState({
             modalTitle: 'Добавление записи',
@@ -294,21 +277,6 @@ export default class MainPage extends React.Component {
                 cczOut={ _cczOut }
             />
         );
-
-        // return (
-        //     <ListItem
-        //         key={ idx }
-        //         id={ item.id }
-        //         regNum={ item.regNum }
-        //         cczIn={ item.cczIn }
-        //         notification={ item.notification }
-        //         cis={ item.cis }
-        //         inspection={ item.inspection }
-        //         custClearance={ item.custClearance }
-        //         cczOut={ item.cczOut }
-        //     />
-        // );
-
     }
 
     // функция используется для позиционирования рамки-выделения в таблице
@@ -330,8 +298,6 @@ export default class MainPage extends React.Component {
     // componentWillMount и componentDidMount здесь позволяют восстановить положение рамки-выделения в таблице
     // после возвращения из Подробностей
     componentWillMount() {
-        //console.log('componentWillMount => setState => selectRecord', MainPage.selectedItemId);
-
         this.setState({ selectedId: Header.selectedItem ? String(Header.selectedItem) : String(MainPage.selectedItemId) });
         //this.setState({ selectedId: Header.selectedItem ? String(Header.selectedItem) : '1' });
 
@@ -339,15 +305,8 @@ export default class MainPage extends React.Component {
     }
 
     componentDidMount() {
-
-        //console.log('componentDidMount => showData', MainPage.selectedItemId);
-
         //this.setState({ data });    //для работы с временной БД
         this.showData();
-
-        //console.log('selected componentDidMount: ', MainPage.selectedItemId);
-
-        //this.selectRecord();
     }
 
     // componentDidUpdate здесь используется для позиционирования рамки-выделения в таблице
@@ -401,5 +360,26 @@ export default class MainPage extends React.Component {
     }
 
 }
+
+
+
+
+//===========================ЗАГЛУШКА для onClickBtnAddRecord============================
+// let newRecord = {
+//     id: Math.random().toFixed(3) * 1000 ,
+//     regNum: 'AAA' + Math.random().toFixed(3) * 1000,
+//     cczIn: new Date(),
+//     notification: new Date(),
+//     cis: new Date(),
+//     inspection: new Date(),
+//     custClearance: new Date(),
+//     cczOut: new Date(),
+// };
+//
+// this.state.data.push(newRecord);
+//
+// this.setState({ selectedId: String(newRecord.id) });
+//============================КОНЕЦ ЗАГЛУШКИ===========================
+
 
 

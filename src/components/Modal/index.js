@@ -4,12 +4,6 @@ import './styles.less';
 
 export default class Modal extends React.Component {
 
-    state = {
-        isOpen: false,
-        isClicked: false,
-        tempDate: null
-    };
-
     static tempDate = null;
 
     optionList = {
@@ -45,10 +39,6 @@ export default class Modal extends React.Component {
                             </select></p>
                         </div>);
 
-    constructor(props) {
-        super(props);
-    }
-
     setCurrentDateTime() {
         Modal.tempDate = new Date();
         document.getElementById('inputСczIn').value = moment(Modal.tempDate).format('DD.MM.YYYY HH:mm:ss');
@@ -56,7 +46,7 @@ export default class Modal extends React.Component {
 
     handleClickButton(e) {
 
-        console.log('Клик на кнопке модального окна: ', e.target.textContent);
+        //console.log('Клик на кнопке модального окна: ', e.target.textContent);
 
         if (e.target.textContent === 'Отмена')
             this.props.onConfirm(false);
@@ -69,12 +59,12 @@ export default class Modal extends React.Component {
             } else if (this.props.modalAction === 'editRecord') {
                 Modal.tempDate = new Date();
                 let param = this.optionList[document.getElementById('selectOption').value];
-                let dataForSend = {};
-                dataForSend[param] = Modal.tempDate;
-                this.props.onConfirm(dataForSend);
+                let dataForSent = {};
+                dataForSent[param] = Modal.tempDate;
+                this.props.onConfirm(dataForSent);
             }
 
-        this.setState({ isClicked: !this.state.isClicked });
+        //this.setState({ isClicked: !this.state.isClicked });
 
         this.closeWindow();
     }
@@ -124,3 +114,10 @@ export default class Modal extends React.Component {
     }
 
 }
+
+
+// state = {
+//     isOpen: false,
+//     isClicked: false,
+//     tempDate: null
+// };
