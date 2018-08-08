@@ -5,21 +5,29 @@ import moment from 'moment';
 //import data from '../../database/db_temp';
 import ListItem from './item';
 import './styles.less';
-import Header from '../../components/Header/index';
+import { Header } from '../../components/Header/index';
 
 import Modal from '../../components/Modal/index';
 
 
-export default class MainPage extends React.Component {
+class MainPage extends React.Component {
 
     static path = '/';
 
     static currentData = [];
 
-    static selectedItemId = 0;
+    //static selectedItemId = 0;
+
+    // state = {
+    //     selectedId: Header.selectedItem ? String(Header.selectedItem) : String(MainPage.selectedItemId),
+    //     data: [],
+    //     modalTitle: null,
+    //     modalContent: null,
+    //     modalFooter: null,
+    //     modalAction: null
+    // };
 
     state = {
-        selectedId: Header.selectedItem ? String(Header.selectedItem) : String(MainPage.selectedItemId),
         data: [],
         modalTitle: null,
         modalContent: null,
@@ -27,12 +35,7 @@ export default class MainPage extends React.Component {
         modalAction: null
     };
 
-
-
-    // constructor(props) {
-    //     super(props);
-    // }
-
+    //////////////////////////////Redux complete///////////////////////////////////////////////////////////////////////
     handleOnClick = (e) => {
         const elt = e.target.parentElement;
         const tableBody = elt.parentElement;
@@ -40,17 +43,16 @@ export default class MainPage extends React.Component {
         tableBody.childNodes.forEach(_ => _.classList.remove('selected'));
         elt.classList.add('selected');
 
-        //console.log('handleOnClick clicked id: ', String(elt.firstChild.textContent));
+        //this.setState({ selectedId: elt.firstChild.textContent });
+        //MainPage.selectedItemId = +elt.firstChild.textContent;
 
-        this.setState({ selectedId: elt.firstChild.textContent });
-        MainPage.selectedItemId = +elt.firstChild.textContent;
+        this.props.onSelectRecord(elt.firstChild.textContent);
 
-        //console.log('handleOnClick selectedItemId: ', MainPage.selectedItemId);
-        //console.log('handleOnClick selectedId: ', this.state.selectedId);
     };
 
     getIndex() {
-        return this.state.data.findIndex(_ => _.id === +this.state.selectedId);
+        //return this.state.data.findIndex(_ => _.id === +this.state.selectedId);
+        return this.state.data.findIndex(_ => _.id === +this.props.selectedItemId );
     }
 
     onClickBtnAddRecord() {
@@ -67,7 +69,7 @@ export default class MainPage extends React.Component {
     }
 
     onClickBtnEditRecord() {
-        //let index = this.state.data.findIndex(_ => _.id === +this.state.selectedId);
+
         let index = this.getIndex();
 
         this.setState({
@@ -82,7 +84,6 @@ export default class MainPage extends React.Component {
 
     onClickBtnDeleteRecord() {
 
-        //let index = this.state.data.findIndex(_ => _.id === +this.state.selectedId);
         let index = this.getIndex();
 
         this.setState({
@@ -96,12 +97,14 @@ export default class MainPage extends React.Component {
     }
 
     actionDeleteRecord() {
-        //let index = this.state.data.findIndex(_ => _.id === +this.state.selectedId);
+
         let index = this.getIndex();
 
-        if ( this.deleteRecord(this.state.selectedId) ) {
+        //if ( this.deleteRecord(this.state.selectedId) ) {
+        if ( this.deleteRecord(this.props.selectedItemId) ) {
             this.state.data.splice(index, 1);
-            this.setState({ selectedId: '1' });
+            //this.setState({ selectedId: '1' });
+            this.props.onSelectRecord(1);
         } else {
             alert('Ошибка в процессе удаления записи');
         }
@@ -122,17 +125,19 @@ export default class MainPage extends React.Component {
 
         if ( this.addRecord(newRecord) ) {
             this.state.data.push(newRecord);
-            this.setState({ selectedId: String(newRecord.id) });
+            //this.setState({ selectedId: String(newRecord.id) });
+            this.props.onSelectRecord(String(newRecord.id));
         } else {
             alert('Ошибка в процессе добавления записи');
         }
     }
 
     actionEditRecord( fetchedData ) {
-        //let index = this.state.data.findIndex(_ => _.id === +this.state.selectedId);
+
         let index = this.getIndex();
 
-        if (this.editRecord( this.state.selectedId, fetchedData )){
+        //if (this.editRecord( this.state.selectedId, fetchedData )){
+        if (this.editRecord( this.props.selectedItemId, fetchedData )){
             let record = this.state.data[index];
             this.state.data[index] = { ...record, ...fetchedData};
         } else {
@@ -142,13 +147,10 @@ export default class MainPage extends React.Component {
 
     getModalData = (fetchedModalData) => {
         if (this.state.modalAction === 'deleting' && fetchedModalData === true) {
-            //console.log('Удаление подтверждено');
             this.actionDeleteRecord();
         } else if (this.state.modalAction === 'newRecord' && fetchedModalData !== false) {
-            //console.log('Добавление подтверждено');
             this.actionNewRecord(fetchedModalData);
         } else if (this.state.modalAction === 'editRecord' && fetchedModalData !== false) {
-            //console.log('Редактирование подтверждено');
             this.actionEditRecord(fetchedModalData);
         } else {
             console.log('Действие отменено');
@@ -175,10 +177,12 @@ export default class MainPage extends React.Component {
             const response = await fetch('http://localhost:3000/api/vehiclelist');
             const data = await response.json();
 
-            //console.log(data);
+            // if (MainPage.selectedItemId === 0)
+            //     MainPage.selectedItemId = await +data[0].id;
 
-            if (MainPage.selectedItemId === 0)
-                MainPage.selectedItemId = await +data[0].id;
+            //======================================возможна лажа - await отсутствует====================
+            if (this.props.selectedItemId === 0)
+                this.props.onSelectRecord(+data[0].id);
 
             this.setState({ data });
 
@@ -246,6 +250,7 @@ export default class MainPage extends React.Component {
     //
     // };
 
+    //////////////////////////////Redux complete///////////////////////////////////////////////////////////////////////
     static formatDate(customDate) {
         // заморочки с определениями типов связаны с тем, что данные сейчас могут приходить как в формате даты (из временной БД),
         // так и в формате строки (из postgresql)
@@ -255,6 +260,7 @@ export default class MainPage extends React.Component {
             return "---";
     }
 
+    //////////////////////////////Redux complete///////////////////////////////////////////////////////////////////////
     renderItems(item, idx) {
 
         let _cczIn = String(MainPage.formatDate(item.cczIn));
@@ -279,27 +285,32 @@ export default class MainPage extends React.Component {
         );
     }
 
+
+    //////////////////////////////Redux complete///////////////////////////////////////////////////////////////////////
     // функция используется для позиционирования рамки-выделения в таблице
     selectRecord() {
 
+        //переделать на getElementById
         let items = document.getElementsByClassName('item');
-
-        //console.log('selectRecord function: ', this.state.selectedId);
 
         let arr = [];
         arr.push.apply(arr, items);
         arr.forEach(_ => _.classList.remove('selected'));
         arr.forEach(_ => {
-            //if (_.firstChild.textContent === String(MainPage.selectedItemId)) _.classList.add('selected');
-            if (_.firstChild.textContent === this.state.selectedId) _.classList.add('selected');
+            //if (_.firstChild.textContent === this.state.selectedId) _.classList.add('selected');
+            if (_.firstChild.textContent === this.props.selectedItemId) _.classList.add('selected');
         });
+
     }
 
+    //////////////////////////////Redux complete///////////////////////////////////////////////////////////////////////
     // componentWillMount и componentDidMount здесь позволяют восстановить положение рамки-выделения в таблице
     // после возвращения из Подробностей
     componentWillMount() {
-        this.setState({ selectedId: Header.selectedItem ? String(Header.selectedItem) : String(MainPage.selectedItemId) });
-        //this.setState({ selectedId: Header.selectedItem ? String(Header.selectedItem) : '1' });
+
+        //this.setState({ selectedId: Header.selectedItem ? String(Header.selectedItem) : String(MainPage.selectedItemId) });
+
+        //предположительно никаких дополнительных операций здесь делать не надо
 
         this.selectRecord();
     }
@@ -309,10 +320,11 @@ export default class MainPage extends React.Component {
         this.showData();
     }
 
+    //////////////////////////////Redux complete///////////////////////////////////////////////////////////////////////
     // componentDidUpdate здесь используется для позиционирования рамки-выделения в таблице
     // после добавления записи
     componentDidUpdate() {
-        //console.log('componentDidUpdate => selectRecord', this.state.selectedId);
+        //console.log('componentDidUpdate => selectRecordAction', this.state.selectedId);
         this.selectRecord();
     }
 
@@ -329,7 +341,7 @@ export default class MainPage extends React.Component {
                     onConfirm={ this.getModalData }
                     modalAction={ this.state.modalAction }
                 />
-                <Header sel={ this.state.selectedId } />
+                <Header />
                 <div>
                     <button onClick={ this.onClickBtnAddRecord.bind(this) }>Добавить запись</button>
                     <button onClick={ this.onClickBtnEditRecord.bind(this) }>Редактировать запись</button>
@@ -359,9 +371,31 @@ export default class MainPage extends React.Component {
         );
     }
 
-}
+};
 
+export default MainPage;
 
+//<Header sel={ /* this.state.selectedId */ this.props.selectedItemId } />
+
+// import { selectRecordAction } from './actions';
+//
+// import { connect } from 'react-redux';
+//
+// const mapStateToProps = (state) => {
+//
+//     return {
+//         selectedItemId: state.selectedItemId
+//     };
+// };
+//
+// const mapDispatchToProps = (dispatch) => {
+//
+//     return {
+//         onSelectRecord: (id) => dispatch(selectRecordAction(id))
+//     };
+// };
+//
+// export default connect(mapStateToProps, mapDispatchToProps)(MainPage);
 
 
 //===========================ЗАГЛУШКА для onClickBtnAddRecord============================

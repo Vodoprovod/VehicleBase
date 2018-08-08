@@ -1,6 +1,6 @@
 import React from 'react';
 
-import Header from '../../components/Header';
+import { Header } from '../../components/Header/index';
 
 class TemporaryPage extends React.Component {
 
@@ -47,6 +47,8 @@ class TemporaryPage extends React.Component {
             let id = e.target.id;
             //this.props.dispatch(deleteElement(index));
 
+            //console.log('this.props.onElementClickProp ---> ' + this.props.onElementClickProp);
+
             this.props.onElementClickProp(id, TemporaryPage.url);
             this.focusOnInput();
         }
@@ -60,16 +62,6 @@ class TemporaryPage extends React.Component {
     }
 
     render() {
-
-        // console.log('render component isErrorListLoading ---> ' + this.props.isErrorListLoading);
-        // console.log('render component isListLoading ---> ' + this.props.isListLoading);
-
-        // if(this.props.isErrorListLoading)
-        //     return <div><h1>Error list loading!</h1></div>;
-        //
-        // if(this.props.isListLoading)
-        //     return <div><h1>List loading...</h1></div>;
-
 
         return (
             <div className='temporaryPage'>

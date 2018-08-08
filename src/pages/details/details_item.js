@@ -2,7 +2,7 @@ import React from 'react';
 // import data from '../../database/db_temp';
 import moment from 'moment';
 
-import Header from '../../components/Header/index';
+import { Header } from '../../components/Header/index';
 import { MainPage } from '../../pages/main/index';
 
 export default class DetailsItemPage extends React.Component {
@@ -51,7 +51,7 @@ export default class DetailsItemPage extends React.Component {
 
         return (
             <div>
-                <Header sel={ this.state.id } />
+                <Header />
                 <div className="topBlockDetails">
                     <div className="headerDetails"><h2>{ this.state.regNum }</h2></div>
                     <table className="tableDetails">
@@ -71,3 +71,5 @@ export default class DetailsItemPage extends React.Component {
     }
 
 }
+
+//<Header sel={ this.state.id } />

@@ -1,2 +1,2 @@
-export MainPage from './main';
+export MainPage from './mainContainer';
 export MainRoutes from './routes';
