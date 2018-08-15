@@ -14,27 +14,6 @@ class MainPage extends React.Component {
 
     static path = '/';
 
-    static currentData = [];
-
-    //static selectedItemId = 0;
-
-    // state = {
-    //     selectedId: Header.selectedItem ? String(Header.selectedItem) : String(MainPage.selectedItemId),
-    //     data: [],
-    //     modalTitle: null,
-    //     modalContent: null,
-    //     modalFooter: null,
-    //     modalAction: null
-    // };
-
-    state = {
-        data: [],
-        modalTitle: null,
-        modalContent: null,
-        modalFooter: null,
-        modalAction: null
-    };
-
     //////////////////////////////Redux complete///////////////////////////////////////////////////////////////////////
     handleOnClick = (e) => {
         const elt = e.target.parentElement;
@@ -43,68 +22,68 @@ class MainPage extends React.Component {
         tableBody.childNodes.forEach(_ => _.classList.remove('selected'));
         elt.classList.add('selected');
 
-        //this.setState({ selectedId: elt.firstChild.textContent });
-        //MainPage.selectedItemId = +elt.firstChild.textContent;
-
         this.props.onSelectRecord(elt.firstChild.textContent);
 
     };
 
+    //////////////////////////////Redux complete///////////////////////////////////////////////////////////////////////
     getIndex() {
         //return this.state.data.findIndex(_ => _.id === +this.state.selectedId);
-        return this.state.data.findIndex(_ => _.id === +this.props.selectedItemId );
+
+        return this.props.currentData.findIndex(_ => _.id === +this.props.selectedItemId );
     }
 
+    //////////////////////////////Redux complete///////////////////////////////////////////////////////////////////////
     onClickBtnAddRecord() {
 
-        this.setState({
+        let modalProps = {
             modalTitle: 'Добавление записи',
             modalContent: 'Заполните поля',
             modalFooter: 'Сохранить',
             modalAction: 'newRecord'
-        });
+        };
 
-        this.showModal();
-
+        this.showModal(modalProps);
     }
 
+    //////////////////////////////Redux complete///////////////////////////////////////////////////////////////////////
     onClickBtnEditRecord() {
 
         let index = this.getIndex();
 
-        this.setState({
+        let modalProps = {
             modalTitle: 'Редактирование записи',
-            modalContent: `Редактирование записи о ТС № ${ this.state.data[index].regNum }`,
+            modalContent: `Редактирование записи о ТС № ${ /*this.state.data[index].regNum*/ this.props.currentData[index].regNum }`,
             modalFooter: 'Сохранить',
             modalAction: 'editRecord'
-        });
+        };
 
-        this.showModal();
+        this.showModal(modalProps);
     }
 
+    //////////////////////////////Redux complete///////////////////////////////////////////////////////////////////////
     onClickBtnDeleteRecord() {
 
         let index = this.getIndex();
 
-        this.setState({
+        let modalProps = {
             modalTitle: 'Удаление записи',
-            modalContent: `Удалить запись о ТС № ${ this.state.data[index].regNum } ?`,
+            modalContent: `Удалить запись о ТС № ${ /*this.state.data[index].regNum */ this.props.currentData[index].regNum} ?`,
             modalFooter: 'Удалить',
             modalAction: 'deleting'
-        });
+        };
 
-        this.showModal();
+        this.showModal(modalProps);
     }
 
+    //отработать установку рамки-выделения на первую запись - помогла конвертация id в строку!!!!
     actionDeleteRecord() {
 
         let index = this.getIndex();
 
-        //if ( this.deleteRecord(this.state.selectedId) ) {
         if ( this.deleteRecord(this.props.selectedItemId) ) {
-            this.state.data.splice(index, 1);
-            //this.setState({ selectedId: '1' });
-            this.props.onSelectRecord(1);
+            this.props.onDeleteRecord(index);
+            this.props.onSelectRecord(String(this.props.currentData[0].id));
         } else {
             alert('Ошибка в процессе удаления записи');
         }
@@ -113,7 +92,7 @@ class MainPage extends React.Component {
     actionNewRecord( fetchedData ) {
 
         let newRecord = {
-        id: Math.random().toFixed(5) * 100000 ,
+            id: Math.random().toFixed(5) * 100000,
             regNum: fetchedData.regNum,
             cczIn: fetchedData.inputСczIn,
             notification: "---",
@@ -124,8 +103,7 @@ class MainPage extends React.Component {
         };
 
         if ( this.addRecord(newRecord) ) {
-            this.state.data.push(newRecord);
-            //this.setState({ selectedId: String(newRecord.id) });
+            this.props.onAddRecord(newRecord);
             this.props.onSelectRecord(String(newRecord.id));
         } else {
             alert('Ошибка в процессе добавления записи');
@@ -136,41 +114,50 @@ class MainPage extends React.Component {
 
         let index = this.getIndex();
 
-        //if (this.editRecord( this.state.selectedId, fetchedData )){
         if (this.editRecord( this.props.selectedItemId, fetchedData )){
-            let record = this.state.data[index];
-            this.state.data[index] = { ...record, ...fetchedData};
+            let record = this.props.currentData[index];
+            this.props.onEditRecord({ ...record, ...fetchedData});
+            this.props.onSelectRecord(String(record.id));
+            this.showData();
         } else {
             alert('Ошибка в процессе редактирования записи');
         }
     }
 
+    //////////////////////////////Redux complete///////////////////////////////////////////////////////////////////////
     getModalData = (fetchedModalData) => {
-        if (this.state.modalAction === 'deleting' && fetchedModalData === true) {
+        if (this.props.modalAction === 'deleting' && fetchedModalData === true) {
             this.actionDeleteRecord();
-        } else if (this.state.modalAction === 'newRecord' && fetchedModalData !== false) {
+        } else if (this.props.modalAction === 'newRecord' && fetchedModalData !== false) {
             this.actionNewRecord(fetchedModalData);
-        } else if (this.state.modalAction === 'editRecord' && fetchedModalData !== false) {
+        } else if (this.props.modalAction === 'editRecord' && fetchedModalData !== false) {
             this.actionEditRecord(fetchedModalData);
         } else {
             console.log('Действие отменено');
         }
 
-        this.setState({
+        let modalProps = {
             modalTitle: null,
             modalContent: null,
             modalFooter: null,
             modalAction: null
-        });
+        };
+
+        this.props.onSetModalProps(modalProps);
     };
 
-    showModal() {
+    //////////////////////////////Redux complete///////////////////////////////////////////////////////////////////////
+    showModal(modalProps) {
+
+        this.props.onSetModalProps(modalProps);
+
         let elt = document.getElementsByClassName('modal');
         elt[0].classList.add('visible');
         let panels = document.getElementsByClassName('panel');
         panels[0].classList.add('visible');
     }
 
+    //////////////////////////////Redux complete///////////////////////////////////////////////////////////////////////
     async showData() {
         try {
 
@@ -182,11 +169,10 @@ class MainPage extends React.Component {
 
             //======================================возможна лажа - await отсутствует====================
             if (this.props.selectedItemId === 0)
-                this.props.onSelectRecord(+data[0].id);
+                //this.props.onSelectRecord( await +data[0].id);
+                this.props.onSelectRecord( data[0].id);
 
-            this.setState({ data });
-
-            MainPage.currentData = data;
+            this.props.onShowData(data);
 
         } catch (err) {
             console.log(err)
@@ -315,8 +301,10 @@ class MainPage extends React.Component {
         this.selectRecord();
     }
 
+    //////////////////////////////Redux complete///////////////////////////////////////////////////////////////////////
     componentDidMount() {
         //this.setState({ data });    //для работы с временной БД
+
         this.showData();
     }
 
@@ -324,23 +312,19 @@ class MainPage extends React.Component {
     // componentDidUpdate здесь используется для позиционирования рамки-выделения в таблице
     // после добавления записи
     componentDidUpdate() {
-        //console.log('componentDidUpdate => selectRecordAction', this.state.selectedId);
+        //console.log('componentDidUpdate ---> ', this.props.selectedItemId);
         this.selectRecord();
     }
 
     render() {
 
         //document.body.onkeydown = this.handleOnKeyDown;
+        let tableData = this.props.currentData;
+
         return (
             <div className='mainPage'>
                 <div className='panel'></div>
-                <Modal
-                    modalTitle={ this.state.modalTitle }
-                    modalContent={ this.state.modalContent }
-                    modalFooter={ this.state.modalFooter }
-                    onConfirm={ this.getModalData }
-                    modalAction={ this.state.modalAction }
-                />
+                <Modal onConfirm={ this.getModalData } />
                 <Header />
                 <div>
                     <button onClick={ this.onClickBtnAddRecord.bind(this) }>Добавить запись</button>
@@ -364,7 +348,7 @@ class MainPage extends React.Component {
                         onClick={ this.handleOnClick }
                         className='tableBody'
                     >
-                    { this.state.data.map(this.renderItems) }
+                    { /*this.state.data.map(this.renderItems)*/ tableData.map(this.renderItems) }
                     </tbody>
                 </table>
             </div>
@@ -415,5 +399,32 @@ export default MainPage;
 // this.setState({ selectedId: String(newRecord.id) });
 //============================КОНЕЦ ЗАГЛУШКИ===========================
 
+{/*<Modal*/}
+    {/*modalTitle={ this.state.modalTitle }*/}
+    {/*modalContent={ this.state.modalContent }*/}
+    {/*modalFooter={ this.state.modalFooter }*/}
+    {/*onConfirm={ this.getModalData }*/}
+    {/*modalAction={ this.state.modalAction }*/}
+{/*/>*/}
 
+
+//static currentData = [];
+
+//static selectedItemId = 0;
+
+// state = {
+//     selectedId: Header.selectedItem ? String(Header.selectedItem) : String(MainPage.selectedItemId),
+//     data: [],
+//     modalTitle: null,
+//     modalContent: null,
+//     modalFooter: null,
+//     modalAction: null
+// };
+
+// state = {
+//     modalTitle: null,
+//     modalContent: null,
+//     modalFooter: null,
+//     modalAction: null
+// };
 

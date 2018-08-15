@@ -1,8 +1,10 @@
 import React from 'react';
+import { connect } from 'react-redux';
 import moment from 'moment';
 import './styles.less';
 
-export default class Modal extends React.Component {
+//export default class Modal extends React.Component {
+class Modal extends React.Component {
 
     static tempDate = null;
 
@@ -114,6 +116,18 @@ export default class Modal extends React.Component {
     }
 
 }
+
+const mapStateToProps = (state) => {
+
+    return {
+        modalTitle: state.setModalProps.modalTitle,
+        modalContent: state.setModalProps.modalContent,
+        modalFooter: state.setModalProps.modalFooter,
+        modalAction: state.setModalProps.modalAction
+    }
+};
+
+export default connect(mapStateToProps)(Modal);
 
 
 // state = {

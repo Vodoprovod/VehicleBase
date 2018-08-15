@@ -27,9 +27,6 @@ export const addElement = (newRecord, url) => {
             console.log('addRecord response error: ', err);
             return false;
         }
-
-
-
     }
 };
 
