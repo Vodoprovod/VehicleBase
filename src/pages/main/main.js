@@ -53,7 +53,7 @@ class MainPage extends React.Component {
 
         let modalProps = {
             modalTitle: 'Редактирование записи',
-            modalContent: `Редактирование записи о ТС № ${ /*this.state.data[index].regNum*/ this.props.currentData[index].regNum }`,
+            modalContent: `Редактирование записи о ТС № ${ this.props.currentData[index].regNum }`,
             modalFooter: 'Сохранить',
             modalAction: 'editRecord'
         };
@@ -68,7 +68,7 @@ class MainPage extends React.Component {
 
         let modalProps = {
             modalTitle: 'Удаление записи',
-            modalContent: `Удалить запись о ТС № ${ /*this.state.data[index].regNum */ this.props.currentData[index].regNum} ?`,
+            modalContent: `Удалить запись о ТС № ${ this.props.currentData[index].regNum} ?`,
             modalFooter: 'Удалить',
             modalAction: 'deleting'
         };
@@ -76,19 +76,19 @@ class MainPage extends React.Component {
         this.showModal(modalProps);
     }
 
+    //////////////////////////////Redux complete///////////////////////////////////////////////////////////////////////
     //отработать установку рамки-выделения на первую запись - помогла конвертация id в строку!!!!
     actionDeleteRecord() {
 
         let index = this.getIndex();
+        let id = this.props.selectedItemId;
 
-        if ( this.deleteRecord(this.props.selectedItemId) ) {
-            this.props.onDeleteRecord(index);
-            this.props.onSelectRecord(String(this.props.currentData[0].id));
-        } else {
-            alert('Ошибка в процессе удаления записи');
-        }
+        this.props.onDeleteRecord(index, id);
+        this.props.onSelectRecord(String(this.props.currentData[0].id));
+
     }
 
+    //////////////////////////////Redux complete///////////////////////////////////////////////////////////////////////
     actionNewRecord( fetchedData ) {
 
         let newRecord = {
@@ -102,26 +102,20 @@ class MainPage extends React.Component {
             cczOut: "---",
         };
 
-        if ( this.addRecord(newRecord) ) {
-            this.props.onAddRecord(newRecord);
-            this.props.onSelectRecord(String(newRecord.id));
-        } else {
-            alert('Ошибка в процессе добавления записи');
-        }
+        this.props.onAddRecord(newRecord);
+        this.props.onSelectRecord(String(newRecord.id));
     }
 
+    //////////////////////////////Redux complete///////////////////////////////////////////////////////////////////////
     actionEditRecord( fetchedData ) {
 
         let index = this.getIndex();
+        let id = this.props.selectedItemId;
 
-        if (this.editRecord( this.props.selectedItemId, fetchedData )){
-            let record = this.props.currentData[index];
-            this.props.onEditRecord({ ...record, ...fetchedData});
-            this.props.onSelectRecord(String(record.id));
-            this.showData();
-        } else {
-            alert('Ошибка в процессе редактирования записи');
-        }
+        let record = this.props.currentData[index];
+
+        this.props.onEditRecord(id, record, fetchedData);
+        this.props.onSelectRecord(String(record.id));
     }
 
     //////////////////////////////Redux complete///////////////////////////////////////////////////////////////////////
@@ -158,74 +152,12 @@ class MainPage extends React.Component {
     }
 
     //////////////////////////////Redux complete///////////////////////////////////////////////////////////////////////
-    async showData() {
-        try {
+    showData() {
 
-            const response = await fetch('http://localhost:3000/api/vehiclelist');
-            const data = await response.json();
+        this.props.onShowData();
 
-            // if (MainPage.selectedItemId === 0)
-            //     MainPage.selectedItemId = await +data[0].id;
-
-            //======================================возможна лажа - await отсутствует====================
-            if (this.props.selectedItemId === 0)
-                //this.props.onSelectRecord( await +data[0].id);
-                this.props.onSelectRecord( data[0].id);
-
-            this.props.onShowData(data);
-
-        } catch (err) {
-            console.log(err)
-        }
-    }
-
-    async addRecord( newRecord ) {
-
-        const request = new Request('http://localhost:3000/api/addvehicle', {
-            method: 'POST',
-            headers: new Headers({ 'Content-Type': 'application/json' }),
-            body: JSON.stringify(newRecord)
-        });
-
-        try {
-            const response = await fetch(request);
-            const data = await response.json();
-            return true;
-        } catch (err) {
-            console.log('addRecord response error: ', err);
-            return false;
-        }
-    }
-
-    async deleteRecord(id) {
-        const request = new Request('http://localhost:3000/api/deletevehicle/' + id, {
-            method: 'DELETE'
-        });
-
-        try {
-            const response = await fetch(request);
-            return true;
-        } catch (err) {
-            console.log('deleteRecord response error: ', err);
-            return false;
-        }
-    }
-
-    async editRecord( id, changedData ) {
-        const request = new Request('http://localhost:3000/api/editvehicle/' + id, {
-            method: 'POST',
-            headers: new Headers({ 'Content-Type': 'application/json' }),
-            body: JSON.stringify(changedData)
-        });
-
-        try {
-            const response = await fetch(request);
-            const data = await response.json();
-            return true;
-        } catch (err) {
-            console.log('editRecord response error: ', err);
-            return false;
-        }
+        if (this.props.selectedItemId === 0)
+            this.props.onSelectRecord( data[0].id);
     }
 
     //разобраться с управлением клавишами-стрелками
@@ -428,3 +360,120 @@ export default MainPage;
 //     modalAction: null
 // };
 
+// async showData() {
+//     try {
+//
+//         const response = await fetch('http://localhost:3000/api/vehiclelist');
+//         const data = await response.json();
+//
+//         // if (MainPage.selectedItemId === 0)
+//         //     MainPage.selectedItemId = await +data[0].id;
+//
+//         //======================================возможна лажа - await отсутствует====================
+//         if (this.props.selectedItemId === 0)
+//         //this.props.onSelectRecord( await +data[0].id);
+//             this.props.onSelectRecord( data[0].id);
+//
+//         this.props.onShowData(data);
+//
+//     } catch (err) {
+//         console.log(err)
+//     }
+// }
+
+// actionNewRecord( fetchedData ) {
+//
+//     let newRecord = {
+//         id: Math.random().toFixed(5) * 100000,
+//         regNum: fetchedData.regNum,
+//         cczIn: fetchedData.inputСczIn,
+//         notification: "---",
+//         cis: "---",
+//         inspection: "---",
+//         custClearance: "---",
+//         cczOut: "---",
+//     };
+//
+//
+//     if ( this.addRecord(newRecord) ) {
+//         this.props.onAddRecord(newRecord);
+//         this.props.onSelectRecord(String(newRecord.id));
+//     } else {
+//         alert('Ошибка в процессе добавления записи');
+//     }
+// }
+
+// actionDeleteRecord() {
+//
+//     let index = this.getIndex();
+//
+//     if ( this.deleteRecord(this.props.selectedItemId) ) {
+//         this.props.onDeleteRecord(index);
+//         this.props.onSelectRecord(String(this.props.currentData[0].id));
+//     } else {
+//         alert('Ошибка в процессе удаления записи');
+//     }
+// }
+
+// actionEditRecord( fetchedData ) {
+//
+//     let index = this.getIndex();
+//
+//     if (this.editRecord( this.props.selectedItemId, fetchedData )){
+//         let record = this.props.currentData[index];
+//         this.props.onEditRecord({ ...record, ...fetchedData});
+//         this.props.onSelectRecord(String(record.id));
+//         this.showData();
+//     } else {
+//         alert('Ошибка в процессе редактирования записи');
+//     }
+// }
+
+// async addRecord( newRecord ) {
+//
+//     const request = new Request('http://localhost:3000/api/addvehicle', {
+//         method: 'POST',
+//         headers: new Headers({ 'Content-Type': 'application/json' }),
+//         body: JSON.stringify(newRecord)
+//     });
+//
+//     try {
+//         const response = await fetch(request);
+//         const data = await response.json();
+//         return true;
+//     } catch (err) {
+//         console.log('addRecord response error: ', err);
+//         return false;
+//     }
+// }
+
+// async deleteRecord(id) {
+//     const request = new Request('http://localhost:3000/api/deletevehicle/' + id, {
+//         method: 'DELETE'
+//     });
+//
+//     try {
+//         const response = await fetch(request);
+//         return true;
+//     } catch (err) {
+//         console.log('deleteRecord response error: ', err);
+//         return false;
+//     }
+// }
+
+// async editRecord( id, changedData ) {
+//     const request = new Request('http://localhost:3000/api/editvehicle/' + id, {
+//         method: 'POST',
+//         headers: new Headers({ 'Content-Type': 'application/json' }),
+//         body: JSON.stringify(changedData)
+//     });
+//
+//     try {
+//         const response = await fetch(request);
+//         const data = await response.json();
+//         return true;
+//     } catch (err) {
+//         console.log('editRecord response error: ', err);
+//         return false;
+//     }
+// }

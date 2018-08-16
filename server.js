@@ -131,6 +131,8 @@ app.post('/api/editvehicle/:id', function(request, response) {
 
     let values = [val, id];
 
+    console.log('data ----> ' + col);
+
     pool.connect((err, db, done) => {
         if (err) {
             return response.status(400).send(err);
