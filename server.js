@@ -152,7 +152,6 @@ app.post('/api/editvehicle/:id', function(request, response) {
     });
 });
 
-
 app.delete('/api/deletevehicle/:id', function(request, response) {
 
     var id = request.params.id;

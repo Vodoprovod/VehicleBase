@@ -28,14 +28,3 @@ const mapDispatchToProps = (dispatch) => {
 
 export default connect(mapStateToProps, mapDispatchToProps)(MainPage);
 
-// const mapDispatchToProps = (dispatch) => {
-//
-//     return {
-//         onSelectRecord: (id) => dispatch(selectRecordAction(id)),
-//         onShowData: (data) => dispatch(pushTableDataAction(data)),
-//         onDeleteRecord: (index) => dispatch(deleteRecordAction(index)),
-//         onAddRecord: (newRecord) => dispatch(addRecordAction(newRecord)),
-//         onEditRecord: (changedData) => dispatch(editRecordAction(changedData)),
-//         onSetModalProps: (modalProps) => dispatch(setModalPropsAction(modalProps))
-//     };
-// };

@@ -1,5 +1,3 @@
-import { combineReducers } from 'redux';
-
 import { SELECT_RECORD, SET_MODAL_PROPS } from './actions';
 
 const selectedId = '0';
@@ -18,7 +16,7 @@ function selectedItemId(state = selectedId, action) {
         default:
             return state;
     }
-};
+}
 
 export function setModalProps(state = modalProps, action) {
     switch (action.type) {
@@ -28,6 +26,6 @@ export function setModalProps(state = modalProps, action) {
         default:
             return state;
     }
-};
+}
 
 export default selectedItemId;

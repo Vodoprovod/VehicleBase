@@ -20,6 +20,6 @@ function tableDataTool(state = tableData, action) {
         default:
             return state;
     }
-};
+}
 
 export default tableDataTool;
